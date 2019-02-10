@@ -1,0 +1,9 @@
+*.pdf
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+
+hw1/two_time_pad
