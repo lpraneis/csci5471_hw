@@ -5,5 +5,9 @@
 *.log
 *.out
 *.synctex.gz
+*.bib
+*.bbl
+*.blg
+*.xml
 
 hw1/two_time_pad
