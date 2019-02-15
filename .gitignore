@@ -9,5 +9,6 @@
 *.bbl
 *.blg
 *.xml
+*.bcf
 
 hw1/two_time_pad
