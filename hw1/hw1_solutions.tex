@@ -9,7 +9,6 @@
 \usepackage{fancyhdr}
 \newcounter{qnum}
 \newcommand{\question}[1]{\stepcounter{qnum}\bigskip\noindent{\bf \arabic{qnum}. #1.}}
-
 \newcommand{\E}{\mathop{\textrm{E}}}
 \newcommand{\cM}{\mathcal{M}}
 \newcommand{\cA}{\mathcal{A}}
@@ -18,6 +17,11 @@
 \newcommand\NetIDa{prane001}          
 % \newcommand\NetIDb{collab?}          
 % \newcommand\NetIDc{collab?}          
+
+%Bibliography
+\usepackage{biblatex}
+\bibliography{References.bib}
+% \addbibresource{References.bib}
 
 \begin{document}
 \begin{center}
@@ -78,8 +82,37 @@
     we have proved a contradiction, we have proven that: $\forall n \in \mathbb{N}, 
     4 \not| n^{2} + 2$
   \item[(d)]
+    We are set to prove that the following equivalence holds true: (odd $-$ even) $\equiv$ number 
+    $\pmod{11}$. Let us consider an n-digit number such that $ N = a_{n} + 10a_{n-1} + 10^{2}
+    a_{n-2} + \cdots + 10^{n-1}a_{1}$ where $\{ a_{1}, \cdots, a_{n}\}$ are the coefficients. If
+    $ 11 | N$, then $N \equiv 0 \pmod{11}$ by the definition of modular equivalence. This means,
+    by definition of $N$, that  $a_{n} + 10a_{n-1} + 10^{2}+  a_{n-2} + \cdots + 10^{n-1}a_{1} 
+    \equiv 0 \pmod{11}$. Now, in order to prove the statement, we first introduce a Lemma that 
+    $10^{x} \equiv (-1)^{x} \pmod {11}$ for any x. We can prove this quickly by considering that 
+    $10$ and $-1$ are in the same equivalence class of $\mathbb{Z}_{11}$ as $11 | (10 + 1)$, thus 
+    the class is closed under multiplication. Thus, we can rewrite $N$ as 
+    $ N = a_{n} - a_{n-1} + a_{n-2} - a_{n-3} + \cdots - (-1)^{n-1}a_{1} \pmod{0}$ which is simply
+    the representation of the even coefficients minus the odd coefficients.\cite{AOPS}
   \item[(e)] 
+    If $n > 1$ is an integer and not prime, we must show that there is a prime such that:
+    $p|n$ and $p \leq \sqrt{n}$. The first condition, that $p|n$, is given by the fundamental 
+    theorem of arithmetic:
+      For any number $>$ 1, n must itself be a prime number, thus $p|n$ or n must be expressed
+      as the unique factorization of primes, in which case, there exits a $p$ such that $p|n$
+    The second part, $p \leq \sqrt{n}$ is proved as follows. If $n$ is not prime and greater
+    than 1, let it be expressed $n = xy$ where $1 < x \leq y$. Let $x$ be chosen such that 
+    $p | x$. This means that $p \leq x \leq y$ and thus, $p^{2} \leq x^{2}\leq xy$.
+    This means that $p \leq \sqrt{xy} = \sqrt{n}$ and thus both parts of the 
+    statement are proven.
   \item[(f)] 
+    We are given that $a^{h} \equiv 1 \pmod{p}$, which is equivalent to $p | (a^{h} -1)$.
+    Thus, $\exists x: px = (a^{h} - 1) \rightarrow (px+1) = a^{h}$. If we raise both sides to 
+    p, $(px+1)^{p} = a^{ph}$. Using binomial expansion, we can express this as the following:
+    \[
+      (px+1)^{p} = a^{ph} = 1 + xp^{2} + \sum_{k=2}^{p} \binom{p}{k} (xp)^{k}
+    \]
+    This equation shows, that every term other than $1$ is divisible by $p^{2}$. Thus, 
+    $ p^{2} | (a^{ph} -1)$ and so, $a^{ph} \equiv 1 \pmod{p^{2}}$.
 \end{itemize}
 
 \newpage
@@ -112,4 +145,6 @@
 \item[(b)] 
 \end{itemize}
 
+\pagebreak
+% \printbibliography
 \end{document}
