@@ -1,0 +1,242 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{hyperref}
+
+\usepackage{amsfonts}
+\newcounter{qnum}
+\newcommand{\question}[1]{\stepcounter{qnum}\bigskip\noindent{\bf \arabic{qnum}. #1.}}
+
+\newcommand{\E}{\mathop{\textrm{E}}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\bbM}{\mathbb{M}}
+\newcommand{\bbK}{\mathbb{K}}
+
+\begin{document}
+\begin{center}
+{\Large \bf CSci 5471: Modern Cryptography}
+\end{center}
+{\bf Homework 1} \hfill {\bf due: February 21, 2019}
+\medskip
+\hrule
+\medskip
+\noindent{\bf Ground Rules.} You may choose to complete these
+homeworks in a group of up to three students.  Each group should turn
+in {\bf one} copy with the names of all group members on it.  You may
+use any source you can find to help with this assignment but you {\bf
+  must} explicitly reference any source you use besides the lecture
+notes or textbook.  Electronically typeset copies of your solution
+should be submitted to \url{canvas.cs5471.org} by 11:59\textsc{pm} on the
+date above.
+
+\question{Number Theory I}[25 points]
+\begin{itemize}
+  \item[(a)] Prove or disprove: $n^3 + (n+1)^3 + (n+2)^3$ is always
+    mutiple of $9$.
+  \item[(b)] Show that if $2^n-1$ is a prime, then $n$ is a prime.
+  \item[(c)] Show that for all integers $n$, $4 \not| n^2 +2$.
+  \item[(d)] To check whether a number is divisible by 11, sum the
+    digits in the odd positions counting from the left (the first, third, ....)
+    and then sum the remaining digits.  If the difference between the two sums
+    is divisible by 11, then so is the original number. Otherwise it is not.
+    Why does this work?
+  \item[(e)] If $n>1$ is an integer and is not a prime, then show that
+  there is a prime such that
+  $$
+  p ~|~ n \text{ and } p \leq \sqrt{n}.
+  $$
+ \item[(f)] [Extra credit: 5 points] Let $p$ be an odd prime. Show that if $a^h\equiv 1\mod p$ then
+    $a^{ph} \equiv 1\mod p^2$.
+\end{itemize}
+
+\newpage
+
+\question{Probability exercises} [25 points]
+\begin{itemize}
+\item[(a)] Let $X_1,\dots,X_n$ be independent random variables with
+  uniform distributions on $\{0,1,\dots,k-1\}$.  What is the
+  probability that there is no $i \in \{1,\dots,n-1\}$ such that $X_i =
+  X_{i+1}$?
+
+\item[(b)] Let $X$ be a non-negative real-valued random variable.
+  Then {\em Markov's Inequality} states that $$\Pr[X > k \cdot \E[X]]
+  \leq \frac{1}{k}\ .$$  Prove Markov's inequality.
+
+\item[(c)] Let $A$ and $B$ be arbitrary events defined over the same
+  experiment, and let $\bar{E}$ denote the complement of any event
+  $E$.  Prove that $\Pr[A] \leq \Pr[A|B] + \Pr[\bar{B}]$.
+
+\item[(d)] Prove the union bound: for any finite sequence of events
+  $E_1, E_2, ... E_k$ defined over the same experiment,
+  $\Pr[\bigcup_{i=1}^k E_i] \leq \sum_{i=1}^k \Pr[E_i]$.
+
+\item[(e)] Let $X_1,\dots,X_n$ be as defined in part (a); let $Y_t =
+  \# \{ i \mid X_i = t \}$ for each $t \in \{0,1,\dots,k-1\}$; and let $m >
+  \lceil \frac{n}{k} +1 \rceil$.  Give a bound on the probability that
+  for some $t$, $Y_t \geq m$.
+
+\item[(f)] [Extra credit: 5 points] Give an exact expression for the
+  probability in part (e).
+\end{itemize}
+\newpage
+\question{Identification and Key Exchange Protocols} [25 points]
+Alice, Bob, Carol, Dave and Eve want to build a chat server that allows
+each of them to authenticate themselves to the server, $S$, using a shared secret
+string, and then authenticate other users in chat sessions using
+certificates and signatures.  They invent a set of protocols for these
+goals:
+
+\paragraph{Enrollment.}  In the enrollment phase, which only happens once:
+\begin{enumerate}
+\item The server picks a signing key pair $(VK_S,Sig_S)$ and announces
+  $VK_S$ to all the users.
+
+\item Each user $U$ picks a secret string $p_U$ and a signing key pair $(VK_U, Sig_U)$,
+and gives $VK_U, p_U$ to the server.
+
+\item The server gives each user $U$ a {\em ticket} $T_U =
+  \mathsf{Sign}_S(H(p_U))$, where $H$ is a cryptographically secure
+  hash function.
+
+\item The server also gives each user $U$ a {\em certificate} $C_U =
+  ID_U || VK_U || \mathsf{Sign}_S(ID_U||VK_U)$, where $ID_U$ is a
+  unique (public) identifier string for user $U$ (e.g. ``Alice,''
+  ``Bob,'' and so on).
+
+\item Next the server picks a ``login key pair'' $(VK_{S1}, Sig_{S1})$
+  and computes a ``server certificate'' $C_S =
+  VK_{S1} || \mathsf{Sign}_S(VK_{S1})$.
+
+\item Finally, the server locally erases $Sig_S$ as well as $p_U$ and
+  $T_U$ for every user $U$.
+\end{enumerate}
+The certificates $C_I$ for $I \in \{A,B,C,D,E,S\}$ are assumed to be
+public knowledge, but users are not required to store any certificates
+other than their own.   (So each user $U$ stores $p_U$, $T_U$, $Sig_U$ and
+$C_U$ but no other values).
+
+\paragraph{Server Login.}  When user $A$ wants to initiate a
+connection with the server:
+\begin{enumerate}
+\item $A \longrightarrow S : ID_A, N_A$, where $N_A$ is a fresh random
+  $k$-bit string.
+\item $S \longrightarrow A: C_S, \mathsf{Sign}_{S1}(ID_A || N_A)$.  $A$ checks that the
+  signatures on $VK_{S1}$ and $ID_A || N_A$ are correct and stops if they
+  are not.
+\item $A \longrightarrow S: p_A, T_A$.  $S$ checks that $T_A$ is a valid
+  sigature on $H(p_A)$, and if it is, accepts user $A$ with identity $ID_A$.
+\end{enumerate}
+
+\paragraph{Chat Authentication.} When users $A$ and $B$ want to
+mutually authenticate each other:
+\begin{enumerate}
+\item $A \longrightarrow B: C_A, ID_B, N_A$, where $N_A$ is a fresh
+  random $k$-bit string.  $B$ checks than $C_A$ is correctly signed
+  (and that $ID_B$ matches his identity) and stops if it is not.
+\item $B \longrightarrow A: C_B, N_B, \mathsf{Sign}_B(N_A)$, where
+  $N_B$ is a fresh random $k$-bit string.  $A$ checks that $C_B$ is
+  correctly signed, matches the identity $ID_B$ in step one, and that
+  the signature on $N_A$ is correct.  If it is, she accepts $B$ with
+  identity $ID_B$.
+\item $A \longrightarrow B: \mathsf{Sign}_A(N_B)$.  $B$ checks that
+  the message is a correct signature using $VK_A$ on the nonce in his
+  previous message, and if it is, he accepts $A$ with identity $ID_A$.
+\end{enumerate}
+\paragraph{Questions:}
+\begin{itemize}
+\item[(a)] Describe an attack that will let Eve, an ordinary user, who knows only $T_E$,
+  $VK_E$, $Sig_E$ and $VK_S$ (and the identifiers for Alice, Bob,
+  Carol and Dave),  convince the server $S$ that she has
+  any identity $ID_V$ for $V \in \{A,B,C,D\}$.  How would you modify
+  the protocols to prevent this attack while still allowing the server
+  to avoid storing tickets and the user to avoid signing at login?
+
+\item[(b)] Describe an attack that will allow Eve to convince Bob that
+  she is Alice by convincing Alice that she is Eve.  (That is, in your
+  attack, Eve should initiate one chat with Bob and one with Alice,
+  and at the end of the Chat Authentication protocols, Bob should have
+  accepted Eve with ID ``Alice'' and Alice will have accepted Eve with
+  ID ``Eve'').
+
+\item[(c)] Describe an attack that will let Steve, the Starbucks
+  eavesdropper who sees one authentication between Alice and $S$,
+  impersonate Alice to the server in future authentications.
+
+\item[(d)] Suppose that to defeat Steve, we modify the login protocol
+  to encrypt all messages between user $U$ and the server using
+  $h_2(p_U)$ as a symmetric key, where $h_2$ is a secure cryptographic hash
+  function (different from the function $h$ used to form tickets).
+  Assuming that the secrets $p_U$ are passwords chosen by the users,
+  Steve may still be able to carry out a modified version of the
+  attack in part (c).  Describe this attack.
+
+\item[(e)] [Extra Credit: 10 points] What vaues known by $U$ and $S$
+  after $U$'s registration protocol would be appropriate to use as
+  input to $h_2$ to derive a symmetric key? Justify your answer.
+
+\end{itemize}
+
+\newpage
+\newpage
+
+\question{Cryptanalysis - The Two Time Pad} [25 points]
+You take a consulting gig with the Lawyers Against Pirating Digital
+Online Goods (LAPDOGs).  They are prosecuting a case in which they are
+certain that some valuable digital goods have been stolen by nefarious
+pirates.  The lawyers have confiscated the hard drive of one of these
+pirates and found two encrypted, 1024-byte file on the drive.
+Furthermore, the LAPDOGs have reason to believe that one of the files
+contains an exact copy of a file from a highly valuable database owned
+by one of their clients.  Forensic analysis suggests that this pirate
+encrypted their files with one time pads.  Alas!
+
+After further investigation, however, you find good evidence that the
+pirate in question re-used the same pad twice to encrypt these
+files. You can't believe your good luck!  Furthermore, the LAPDOGs
+believe that one of the files is from the same client database as the
+earlier case, but have not identified a client to bill for the second
+ciphertext.
+
+\begin{itemize}
+\item[(a)] To see the ciphertexts, run the command
+  \verb#/class/csci5471/hw1/make2tp# (on a CSELabs machine).  This program
+  will write 2048 bytes of ciphertext on the standard output.  The
+  first 1024 bytes are one file and the last 1024 are the other.  Both
+  are encrypted with the same one-time pad.  Write a program that
+  recovers the plaintexts corresponding to these two files.  You may
+  assume that one of the plaintexts corresponds to a file from the
+  client data base -  \verb#/class/csci5471/hw1/db/#  - and the other is in English.
+
+  For the assignment, you should submit the two recovered plaintexts,
+  and a description of the algorithm used to recover them.  Your
+  submission should also be accompanied by a source file for your
+  program.
+
+  \begin{itemize}
+  \item Each student will get a
+    unique result from \verb#make2tp#, which you should
+    redirect to a file.
+  \item Suppose $c_1 = k \oplus f_i$ for some file $f_i$ in the
+    database and $c_2 = k \oplus e$ for some english text file.
+    Then what does $c_1\oplus c_2$ look like?
+  \item The file \verb#/class/csci5471/hw1/ftable2.csv# contains a bigram frequency table
+    for a sample of English text.  Each row starts with a character $first$;
+    the value in the column $next$ is how often the character $next$
+    follows $first$ in the sample.  The very first row gives the overall
+    frequency of each character (blank space plus A-Z) in the sample.
+  \end{itemize}
+\item[(b)] [Extra Credit: 10 points] Develop a program to recover the
+  plaintexts {\em without} using the suspected plaintext files in
+  \verb#/class/csci5471/hw1/db/#: your program should work only on the assumption
+  that both plaintexts are English text.  Run the command
+  \verb#second2tp# to get a second pair of files for this question.
+
+  Your solution for this portion should include the recovered
+  plaintexts, and describe the algorithm used by your program. Your
+  submission should be accompanied by a clearly labelled source file
+  that implements this algorithm.
+\end{itemize}
+
+\end{document}

@@ -1,6 +1,9 @@
 \documentclass[11pt]{article}
 \usepackage{fullpage}
 \usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
 \usepackage{amssymb}
 \usepackage{url}
 \usepackage{hyperref}
@@ -23,6 +26,7 @@
 \bibliography{References.bib}
 % \addbibresource{References.bib}
 
+
 \begin{document}
 \begin{center}
 {\Large \bf CSci 5471: Modern Cryptography}
@@ -30,10 +34,6 @@
 {\bf Homework 1} \hfill {\bf due: February 21, 2019}
 \newline
 {\bf \NetIDa} \hfill  
-% {\bf \NetIDb} \hfill 
-% \\
-% {\bf \NetIDc} \hfill 
-
 \medskip
 \hrule
 \medskip
@@ -114,12 +114,21 @@
     This equation shows, that every term other than $1$ is divisible by $p^{2}$. Thus, 
     $ p^{2} | (a^{ph} -1)$ and so, $a^{ph} \equiv 1 \pmod{p^{2}}$.
 \end{itemize}
-
 \newpage
 
 \question{Probability exercises} 
 \begin{itemize}
 \item[(a)] 
+  Given a set $X_1, \dots, X_n$ over the range $\{0,1,\dots,k-1\}$, there are $k$ distant 
+  possibilities for each $X_i$. Thus, the probability that $X_i \neq X_{i+1}$ for a given $i$ is:
+  \[
+    1 - \frac{1}{k} \rightarrow \frac{k-1}{k}
+  \]
+  However, this probability is for a single $i$ pair. For the $n-1$ pairs in the set of events, $X$,
+  we must multiply this probability by the $n-1$ choices and so the final probability becomes:
+  \[
+    \Pr[X_i \neq X_{i+1} \forall i: 1\leq i < n] =\Big(\frac{k-1}{k}\Big)^{n-1}
+ \]
 \item[(b)]
 \item[(c)] 
 \item[(d)]
@@ -139,11 +148,38 @@
 
 \newpage
 
-\question{Cryptanalysis - The Two Time Pad} 
-\begin{itemize}
-\item[(a)] 
-\item[(b)] 
-\end{itemize}
+\question{Cryptanalysis: The Two Time Pad} 
+\begin{algorithm}
+  \caption{Recover Plaintexts}
+  \begin{algorithmic}
+    \State{aaBytes $\leftarrow$ bytes(ciphertextaa)}
+    \State{abBytes $\leftarrow$ bytes(ciphertextab)}
+    \State{englishText $\leftarrow$ [A, ... ,Z, ' ', $\backslash0$ ]}
+    \State{xordBytes $\leftarrow$ aaBytes $\oplus$ abBytes}
+    \For{file in database}
+      \State{fileBytes $\leftarrow$ bytes(file)}
+      \State{testBytes $\leftarrow$ xordBytes $\oplus$ fileBytes}
+      \For{character in file}
+      \If{character not in englishText}
+        \State{decrypt = false}
+        \State{break}
+      \EndIf
+      \State{plaintextB += character}
+      \EndFor
+      \If{decrypt}
+      \State{plaintextA $\leftarrow$ file}
+      \EndIf
+    \EndFor
+    \State \Return{plaintextA, plaintextB}
+  \end{algorithmic}
+\end{algorithm}
+
+\paragraph{Plaintext 1}
+I SAW FIREWORKS FROM THE FREEWAY AND BEHIND CLOSED EYES I CANNOT MAKE THEM GO AWAY CAUSE YOU WERE BORN ON THE FOURTH OF JULY FREEDOM RING NOW SOMETHING ON THE SURFACE IT STINGS THAT SOMETHING ON THE SURFACE IT KIND OF MAKES ME NERVOUS WHO SAYS THAT YOU DESERVE THIS AND WHAT KIND OF GOD WOULD SERVE THIS WE WILL CURE THIS DIRTY OLD DISEASE IF YOUVE GOT THE POISON IVE GOT THE REMEDY THE REMEDY IS THE EXPERIENCE IT IS A DANGEROUS LIAISON I SAY THE COMEDY IS THAT ITS SERIOUS WHICH IS A STRANGE ENOUGH NEW PLAY ON WORDS I SAY THE TRAGEDY IS HOW YOURE GONNA SPEND THE REST OF YOUR NIGHTS WITH THE LIGHT ON SO SHINE THE LIGHT ON ALL OF YOUR FRIENDS BECAUSE IT ALL AMOUNTS TO NOTHING IN THE END I WONT WORRY MY LIFE AWAY I WONT WORRY MY LIFE AWAY I HEARD TWO MEN TALKING ON THE RADIO IN A CROSS FIRE KIND OF NEW REALITY SHOW UNCOVERING THE WAYS TO PLAN THE NEXT BIG ATTACK THEY WERE COUNTING DOWN THE DAYS TO STAB THE BROTHER IN THE BE RIGHT BACK AFTER THIS THE UNAVOIDABLE KISS WHERE THE MINTY FRESH DEATH BREATH IS SURE TO OUT
+
+ \paragraph{Plaintext 2}
+DOOM WHETHER SHE MUST RETURN TO HER FATHERS HOME OR FOLLOW THE CHIEFTAINS TO THE LAND OF HELLAS NOW WHEN THE MAIDEN HAD MUSED UPON ALL THIS SHARP ANGUISH SHOOK HER HEART UNCEASINGLY AND QUICKLY SHE CALLED FORTH JASON ALONE APART FROM HIS COMRADES AND LED HIM ASIDE UNTIL THEY WERE FAR AWAY AND BEFORE HIS FACE UTTERED HER SPEECH ALL BROKEN WITH SOBS WHAT IS THIS PURPOSE THAT YE ARE NOW DEVISING ABOUT ME O SON OF AESON HAS THY TRIUMPH UTTERLY CAST FORGETFULNESS UPON THEE AND RECKEST THOU NOTHING OF ALL THAT THOU SPAKEST WHEN HELD FAST BY NECESSITY WHITHER ARE FLED THE OATHS BY ZEUS THE SUPPLIANTS GOD WHITHER ARE FLED THY HONIED PROMISES FOR WHICH IN NO SEEMLY WISE WITH SHAMELESS WILL I HAVE LEFT MY COUNTRY THE GLORIES OF MY HOME AND EVEN MY PARENTSTHINGS THAT WERE DEAREST TO ME AND FAR AWAY ALL ALONE I AM BORNE OVER THE SEA WITH THE PLAINTIVE KINGFISHERS BECAUSE OF THY TROUBLE IN ORDER THAT I MIGHT SAVE THY LIFE IN FULFILLING THE CONTESTS WITH THE OXEN AND THE EARTHBORN MEN LAST OF ALL THE FLEECEWHEN THE MATTER
+
 
 \pagebreak
 % \printbibliography
