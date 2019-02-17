@@ -29,7 +29,7 @@
 
 \begin{document}
 \begin{center}
-{\Large \bf CSci 5471: Modern Cryptography}
+  {\Large \bf CSci 5471: Modern Cryptography}
 \end{center}
 {\bf Homework 1} \hfill {\bf due: February 21, 2019}
 \newline
@@ -97,8 +97,8 @@
     If $n > 1$ is an integer and not prime, we must show that there is a prime such that:
     $p|n$ and $p \leq \sqrt{n}$. The first condition, that $p|n$, is given by the fundamental 
     theorem of arithmetic:
-      For any number $>$ 1, n must itself be a prime number, thus $p|n$ or n must be expressed
-      as the unique factorization of primes, in which case, there exits a $p$ such that $p|n$
+    For any number $>$ 1, n must itself be a prime number, thus $p|n$ or n must be expressed
+    as the unique factorization of primes, in which case, there exits a $p$ such that $p|n$
     The second part, $p \leq \sqrt{n}$ is proved as follows. If $n$ is not prime and greater
     than 1, let it be expressed $n = xy$ where $1 < x \leq y$. Let $x$ be chosen such that 
     $p | x$. This means that $p \leq x \leq y$ and thus, $p^{2} \leq x^{2}\leq xy$.
@@ -114,39 +114,100 @@
     This equation shows, that every term other than $1$ is divisible by $p^{2}$. Thus, 
     $ p^{2} | (a^{ph} -1)$ and so, $a^{ph} \equiv 1 \pmod{p^{2}}$.
 \end{itemize}
-\newpage
 
 \question{Probability exercises} 
 \begin{itemize}
-\item[(a)] 
-  Given a set $X_1, \dots, X_n$ over the range $\{0,1,\dots,k-1\}$, there are $k$ distant 
-  possibilities for each $X_i$. Thus, the probability that $X_i \neq X_{i+1}$ for a given $i$ is:
-  \[
-    1 - \frac{1}{k} \rightarrow \frac{k-1}{k}
-  \]
-  However, this probability is for a single $i$ pair. For the $n-1$ pairs in the set of events, $X$,
-  we must multiply this probability by the $n-1$ choices and so the final probability becomes:
-  \[
-    \Pr[X_i \neq X_{i+1} \forall i: 1\leq i < n] =\Big(\frac{k-1}{k}\Big)^{n-1}
- \]
-\item[(b)]
-\item[(c)] 
-\item[(d)]
-\item[(e)]
-\item[(f)]
+  \item[(a)] 
+    Given a set $X_1, \dots, X_n$ over the range $\{0,1,\dots,k-1\}$, there are $k$ distant 
+    possibilities for each $X_i$. Thus, the probability that $X_i \neq X_{i+1}$ for a given $i$ is:
+    \[
+      1 - \frac{1}{k} \rightarrow \frac{k-1}{k}
+    \]
+    However, this probability is for a single $i$ pair. For the $n-1$ pairs in the set of events, $X$,
+    we must multiply this probability by the $n-1$ choices and so the final probability becomes:
+    \[
+      \Pr[X_i \neq X_{i+1} \forall i: 1\leq i < n] =\Big(\frac{k-1}{k}\Big)^{n-1}
+    \]
+  \item[(b)]
+    %TODO
+  \item[(c)] 
+    %TODO
+  \item[(d)]
+    %TODO
+  \item[(e)]
+    %TODO
+  \item[(f)]
+    %TODO
 \end{itemize}
-\newpage
 
 \question{Identification and Key Exchange Protocols} 
 \begin{itemize}
-\item[(a)] 
-\item[(b)]
-\item[(c)]
-\item[(d)]
-\item[(e)]
+  \item[(a)]  Eve can impersonate any other user by exploiting the fact that the server does
+    not keep track of which password, ticket pair belongs to each user. This would allow Eve to 
+    create a connection with the server masquerading as any $ID_U$ for $U \in \{A,B,C,D\}$.
+    \begin{enumerate}
+      \item $E \longrightarrow S: ID_U, N_E$
+      \item $S \longrightarrow E: C_S, \mathsf{Sign}_{S1}(ID_U || N_E)$
+      \item $E \longrightarrow S: P_E, T_E$
+    \end{enumerate}
+    We could modify this protocol to prevent this attack by making the following switch:
+    \begin{align}
+      \text{Old Ticket}&:T_U = \mathsf{Sign}_S(H(P_U)) \nonumber \\
+      \text{New Ticket}&:T_U = \mathsf{Sign}_S(H(P_U) || ID_U)  \nonumber 
+    \end{align}
+    This would allow the server to check each time if the password and the ID match up.
+  \item[(b)]
+    Eve can convince Bob that she is Alice by exploiting the fact that the User Authentication
+    protocol is vulnerable to a Man In The Middle Attack, as shown below:
+    \begin{enumerate}
+      \item $E(``A") \longrightarrow B: C_A, N_E, ID_B  $ 
+      \item $B\longrightarrow E(``A") : C_B, N_B, \mathsf{Sign}_B(N_E)  $ 
+      \item $E \longrightarrow A: C_E, ID_A, N_B$
+      \item $A \longrightarrow E: C_A, N_A, \mathsf{Sign}_A(N_B)$
+      \item $E(``A") \longrightarrow B: \mathsf{Sign}_A(N_B)$ 
+      \item $E \longrightarrow A: \mathsf{Sign}_E(N_A)$
+    \end{enumerate}
+    In this exchange, the $E, A$ authentication does not matter and is only used so $E$ can get 
+    $B$'s nonce to send to $A$ to sign.
+  \item[(c)]
+    In this case, Steve, an eavesdropper, can convince the server that he is $A$ if he can 
+    intercept the third stage of the Server login phase, as demonstrated below:
+    \begin{enumerate}
+      \item $A \longrightarrow S : ID_A, N_A$
+      \item $S \longrightarrow A: C_S, \mathsf{Sign}_{S1}(ID_A || N_A)$
+      \item $A \longrightarrow S: p_A, T_A$, here Steve can intercept this message, and 
+        then login as shown below:
+    \end{enumerate}
+    Steve (``Alice'') Server Login:
+    \begin{enumerate}
+      \item $Steve(A) \longrightarrow S : ID_A, N_{Steve}$
+      \item $S \longrightarrow A: C_S, \mathsf{Sign}_{S1}(ID_A || N_{Steve})$
+      \item $Steve(A) \longrightarrow S: p_A, T_A$
+    \end{enumerate}
+  \item[(d)]
+    %TODO
+    In this case, Steve cannot exactly replicate the exploit of part (c), as he needs the user 
+    password in order to encrypt the first message. However, if Steve can capture both the first 
+    and the third step in the Server Login Phase, he can still identify himself to the server by 
+    simply `replaying' or resending the messages. If he resends the first message (encrypted using
+    $h2(p_u)$), and upon the server reply, he resends the third message, he can be authenticated 
+    to the server. If the server happens to have mechanisms in place that check that the Nonce 
+    generated in this first step of the authentication is `fresh', then Steve would have to 
+    perform a more computationally intensive exploit. Because the hash function is not private, 
+    and the input to the hash is a user-chosen password, Steve can use a dictionary / brute force
+    attack on his captured third step of the authentication. Because the theoretical third step 
+    would contain the following message: $\mathsf{Enc}_k(p_A, T_A)$, and the $k$ is determined by
+    $h2(p_A)$, Steve can perform an attack by guessing $p_A$ and testing whether or not the $k$ 
+    generated by this password can decrypt $\mathsf{Enc}_k(p_A, T_A)$ to reveal the $p$ he guessed.
+    Now this attack is a lot more involved than the previous replay attack, but can still be done
+    given the effectiveness of dictionary and brute force attacks against insecure user passwords.
+  \item[(e)]
+    The values $T_U$ and $VK_U$ would be appropriate inputs to the hash function as $T_U$
+    is a signed hash already, making it not directly dependent on the user password. Additionally, 
+    the $T_U$ used could be the modified $T_U$ from part (a) for additional security. $VK_U$ 
+    additionally can be used as an input as it is created by a Key Signing algorithm rather than
+    created by users, making it less predictable.
 \end{itemize}
-
-\newpage
 
 \question{Cryptanalysis: The Two Time Pad} 
 \begin{algorithm}
@@ -157,18 +218,18 @@
     \State{englishText $\leftarrow$ [A, ... ,Z, ' ', $\backslash0$ ]}
     \State{xordBytes $\leftarrow$ aaBytes $\oplus$ abBytes}
     \For{file in database}
-      \State{fileBytes $\leftarrow$ bytes(file)}
-      \State{testBytes $\leftarrow$ xordBytes $\oplus$ fileBytes}
-      \For{character in file}
-      \If{character not in englishText}
-        \State{decrypt = false}
-        \State{break}
-      \EndIf
-      \State{plaintextB += character}
-      \EndFor
-      \If{decrypt}
-      \State{plaintextA $\leftarrow$ file}
-      \EndIf
+    \State{fileBytes $\leftarrow$ bytes(file)}
+    \State{testBytes $\leftarrow$ xordBytes $\oplus$ fileBytes}
+    \For{character in file}
+    \If{character not in englishText}
+    \State{decrypt = false}
+    \State{break}
+    \EndIf
+    \State{plaintextB += character}
+    \EndFor
+    \If{decrypt}
+    \State{plaintextA $\leftarrow$ file}
+    \EndIf
     \EndFor
     \State \Return{plaintextA, plaintextB}
   \end{algorithmic}
@@ -177,10 +238,9 @@
 \paragraph{Plaintext 1}
 I SAW FIREWORKS FROM THE FREEWAY AND BEHIND CLOSED EYES I CANNOT MAKE THEM GO AWAY CAUSE YOU WERE BORN ON THE FOURTH OF JULY FREEDOM RING NOW SOMETHING ON THE SURFACE IT STINGS THAT SOMETHING ON THE SURFACE IT KIND OF MAKES ME NERVOUS WHO SAYS THAT YOU DESERVE THIS AND WHAT KIND OF GOD WOULD SERVE THIS WE WILL CURE THIS DIRTY OLD DISEASE IF YOUVE GOT THE POISON IVE GOT THE REMEDY THE REMEDY IS THE EXPERIENCE IT IS A DANGEROUS LIAISON I SAY THE COMEDY IS THAT ITS SERIOUS WHICH IS A STRANGE ENOUGH NEW PLAY ON WORDS I SAY THE TRAGEDY IS HOW YOURE GONNA SPEND THE REST OF YOUR NIGHTS WITH THE LIGHT ON SO SHINE THE LIGHT ON ALL OF YOUR FRIENDS BECAUSE IT ALL AMOUNTS TO NOTHING IN THE END I WONT WORRY MY LIFE AWAY I WONT WORRY MY LIFE AWAY I HEARD TWO MEN TALKING ON THE RADIO IN A CROSS FIRE KIND OF NEW REALITY SHOW UNCOVERING THE WAYS TO PLAN THE NEXT BIG ATTACK THEY WERE COUNTING DOWN THE DAYS TO STAB THE BROTHER IN THE BE RIGHT BACK AFTER THIS THE UNAVOIDABLE KISS WHERE THE MINTY FRESH DEATH BREATH IS SURE TO OUT
 
- \paragraph{Plaintext 2}
+\paragraph{Plaintext 2}
 DOOM WHETHER SHE MUST RETURN TO HER FATHERS HOME OR FOLLOW THE CHIEFTAINS TO THE LAND OF HELLAS NOW WHEN THE MAIDEN HAD MUSED UPON ALL THIS SHARP ANGUISH SHOOK HER HEART UNCEASINGLY AND QUICKLY SHE CALLED FORTH JASON ALONE APART FROM HIS COMRADES AND LED HIM ASIDE UNTIL THEY WERE FAR AWAY AND BEFORE HIS FACE UTTERED HER SPEECH ALL BROKEN WITH SOBS WHAT IS THIS PURPOSE THAT YE ARE NOW DEVISING ABOUT ME O SON OF AESON HAS THY TRIUMPH UTTERLY CAST FORGETFULNESS UPON THEE AND RECKEST THOU NOTHING OF ALL THAT THOU SPAKEST WHEN HELD FAST BY NECESSITY WHITHER ARE FLED THE OATHS BY ZEUS THE SUPPLIANTS GOD WHITHER ARE FLED THY HONIED PROMISES FOR WHICH IN NO SEEMLY WISE WITH SHAMELESS WILL I HAVE LEFT MY COUNTRY THE GLORIES OF MY HOME AND EVEN MY PARENTSTHINGS THAT WERE DEAREST TO ME AND FAR AWAY ALL ALONE I AM BORNE OVER THE SEA WITH THE PLAINTIVE KINGFISHERS BECAUSE OF THY TROUBLE IN ORDER THAT I MIGHT SAVE THY LIFE IN FULFILLING THE CONTESTS WITH THE OXEN AND THE EARTHBORN MEN LAST OF ALL THE FLEECEWHEN THE MATTER
-
-
 \pagebreak
+%TODO: Uncomment!
 % \printbibliography
 \end{document}
