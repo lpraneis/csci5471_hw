@@ -12,3 +12,5 @@
 *.bcf
 
 hw1/two_time_pad/db
+
+*/Session.vim

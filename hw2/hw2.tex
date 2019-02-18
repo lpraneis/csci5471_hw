@@ -1,0 +1,295 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{hyperref}
+
+\usepackage{amsfonts}
+\newcounter{qnum}
+\newcommand{\question}[1]{\stepcounter{qnum}\bigskip\noindent{\bf \arabic{qnum}. #1.}}
+
+\newcommand{\E}{\mathop{\textrm{E}}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\bbM}{\mathbb{M}}
+\newcommand{\bbK}{\mathbb{K}}
+\newcommand{\enc}{\textsf{Enc}}
+\newcommand{\dec}{\textsf{Dec}}
+\newcommand{\gen}{\textsf{Gen}}
+
+\begin{document}
+\begin{center}
+{\Large \bf CSci 5471: Modern Cryptography}
+\end{center}
+{\bf Homework 2} \hfill {\bf due: March 7, 2019}
+\medskip
+\hrule
+\medskip
+\noindent{\bf Ground Rules.} You may choose to complete these
+homeworks in a group of up to three students.  Each group should turn
+in {\bf one} copy with the names of all group members on it.  You may
+use any source you can find to help with this assignment but you {\bf
+  must} explicitly reference any source you use besides the lecture
+notes or textbook.  Electronically typeset copies of your solution
+should be submitted to canvas by 11:59\textsc{pm} on the
+date above.
+
+\newcommand{\st}{\textsf{st}} \newcommand{\evolve}{\textsf{evolve}}
+\newcommand{\fsec}[1]{\textsf{Fsec}_{#1}}
+\question{Stream Ciphers, Pseudorandomness, and Distinguishers} [15 points] 
+In practice, most variable output-length stream ciphers can be written
+as a combination of two functions $\textsf{init}$ and
+$\textsf{evolve}$.  $\textsf{init}$ takes as input a random seed $s$
+and outputs a state $\st$.  $\evolve$ takes as input a state $\st$ and
+outputs a pair $(\st',\textsf{nextWord})$ where $\st'$ is another
+state and $\textsf{nextWord} \in \{0,1\}^w$ for some fixed word size
+$w$.  \footnote{typical values for $w$ include $1$, $8$, $32$ and
+  $64$.}  To generate the pseudorandom sequence $G(s,{\tt 1}^\ell)$ of
+length $\ell$, the stream cipher sets $\st_0 = \textsf{init}(s)$,
+computes $(\st_i,w_i) = \evolve(\st_{i-1})$ for
+$i \in \{1,\dots, \ell/|w|\}$, and outputs
+$w_1 || \cdots || w_{\ell/|w|}$.
+
+\begin{itemize}
+\item[(a)] [5 points] When used in synchronized mode, each party only needs to remember the
+  current state $\st_i$ in order to construct the remaining bits of
+  the stream. One question is whether such a scheme is ``forward
+  secure:'' if an adversary manages to recover the current state, are
+  messages already sent with the cipher still secure?  Define the
+  forward security experiment $\fsec{\cA,G}(n)$ as follows:
+\begin{enumerate}
+\item $\ell \gets \cA({\tt 1}^n)$
+\item Choose $s \in_R \{0,1\}^n$, set $\st_0 = \textsf{init}(s)$ and
+  $(\st_i,w_i) = \evolve(\st_{i-1})$ for $i \in \{1,\dots\ell\}$.
+\item Set $\sigma_0 = w_1||\cdots||w_\ell$, and choose $\sigma_1 \in_R
+  \{0,1\}^{|\sigma_0|}$.
+\item Choose $b \in_R \{0,1\}$ and let $b' \gets \cA({\tt 1}^n,
+  \sigma_b, \st_\ell)$.
+\item Output $1$ if $b=b'$ and $0$ otherwise.
+\end{enumerate}
+Say that a generator $G = (\textsf{init},\evolve)$ is forward secure
+iff for every polynomial time $\cA$, there exists a negligible
+$\varepsilon(n)$ such that $\Pr[\fsec{\cA,G}(n)=1] \leq \frac{1}{2} +
+  \varepsilon(n)$. 
+
+Prove that if $G$ is forward secure then it is also a variable
+output-length pseudorandom generator.
+
+\item[(b)] [5 points] A classical example of a statistical
+  distinguisher $D$ comes from the Enigma machine used by the German
+  military in the second World War: this machine had the property that
+  no plaintext letter could encrypt to itself, which led in part to
+  its eventual cryptanalytic defeat by the United Kingdom.  While the
+  Enigma was not quite a stream cipher (the letters typed into the
+  machine influenced its internal state), we could imagine a stream
+  cipher $(\textsf{init},\evolve)$ with a similar property: namely,
+  that for every state $\st$, the word computed by $\evolve(\st)$
+  cannot be the zero word ${\tt 0}^w$.  Describe a distinguisher $D$
+  for a stream cipher with the property, and compute its advantage for
+  sequences of length $m\cdot 2^w$.
+
+\item[(c)] [5 points] A more modern example of a stream cipher with
+  statistical distinguisher attacks is the (Alleged) RC4 stream cipher
+  (\url{https://en.wikipedia.org/wiki/RC4#Description}), which has
+  word size $w=8$.  The known attacks mainly involve consecutive pairs
+  of words, for example, the probability that two consecutive words output by
+  RC4 are both ${\tt 0}$ is at least $2^{-16}(1+2^{-8})$.  Describe a
+  distinguisher for the output of RC4 based on this fact, and compute
+  the gap advantage of your distinguisher given a sequence of $m\cdot 2^{16}$ words.
+\end{itemize}
+
+\question{Balls and Bins and Random Mappings} [20 points]
+\begin{itemize}
+\item[(a)]  [5 points] Suppose we throw $m$ balls to $n$ bins. 
+    What is the expected number of bins which have at least one ball? 
+    Assume the bins are large enough to hold infinitely many balls and 
+    that the throws are independent of each other.  (Hint: start with
+    $m=1$; what is the probability that a specific bin is empty?
+    Generalize to larger $m$ and use linearity of expectation plus the
+    fact that if $k$ bins are empty, $n-k$ have at least one ball.)
+
+\item[(b)]  [5 points] Suppose we have $\alpha \cdot n \ (0< \alpha \leq 1)$ balls and $n$ bins.
+    After throwing all the balls into the bins randomly, what is the expected
+    number of bins which have at least one ball?  
+
+\item[(c)] [5 points]  Let $\mathcal{F}_{k,n}$ denote the set of all functions $f :
+    \{0,1\}^k \rightarrow \{0,1\}^n$.  Prove that a random element of
+    $\mathcal{F}_{k,2k+1}$ is one-to-one with probability at least
+    $1/2$.  (Hint: what is the expected number of pairs $x \neq y$ such
+    that $f(x) = f(y)$?)
+
+\item[(d)] [5 points] Let $p$ be a prime, and let $x,y \in
+  \mathbb{Z}_p$ be chosen arbitrarily.  Prove that for a randomly
+  chosen degree $d < p$ polynomial $f \in \mathbb{Z}_p[x]$,
+  $\Pr[f(x)\equiv y \bmod p] \leq d/p$.
+
+\item[(e)]  Extra Credit: [5 points] In general, what is the
+  probability that a random element of $\mathcal{F}_{k,n}$ is
+  one-to-one when $k \leq n$?  You may use the approximation
+  $(1-\frac{1}{n})^n \approx e^{-1}$.
+\end{itemize}
+
+\question{Block Ciphers, PRPs and PRFs} [20 points]
+\begin{itemize}
+\item[(a)] [10 points] Suppose we want to extend the key size of a Block
+  Cipher $E : \{0,1\}^k \times \{0,1\}^\ell \rightarrow \{0,1\}^\ell$.
+  One possible method would be to define $E' : \{0,1\}^{k+\ell} \times
+  \{0,1\}^\ell \rightarrow \{0,1\}^\ell$ by $E'_{K||P}(x) =
+  E_K(P\oplus x)$.  Prove that this does not improve the security of
+  $E$ against brute force attacks: $E'$ can be completely broken with
+  at most $2^k$ trial decryptions.  (Assume you have access to a moderate
+  number of $(x,E'(x))$ pairs)
+
+\item[(b)] [10 points] The Feistel construction can be seen as a
+  method of constructing a secure block cipher on $2\ell$-bit blocks
+  from a secure block cipher $\rho$ on $\ell$-bit blocks by repeating
+  several rounds of the map $(L,R) \mapsto (R,L\oplus\rho(R))$.
+  Consider instead the method of repeating several rounds of the map
+  $(L,R) \mapsto (L\oplus\rho(L\oplus R), R \oplus \rho(L\oplus R))$.
+  Prove that (i) this method is invertible, but (ii) even if we use
+  truly random round functions $\rho_i$, the construction is not a
+  secure PRP, for {\em any} number of rounds.
+
+\item[(d)] [Extra Credit: 10 points] Suppose we are given a secure
+  block cipher $E : \{0,1\}^k \times \{0,1\}^\ell \rightarrow
+  \{0,1\}^\ell$ and want to construct a secure PRF $F : \mathbb{K}
+  \times \{0,1\}^\ell \rightarrow \{0,1\}^{2\ell}$.  Give a
+  construction of $F$ from $E$ that is provably secure.
+\end{itemize}
+
+\question{Block Cipher Modes} [20 points]  One of the common mistakes
+that software developers make in their use of crypto is trying to
+design their own block cipher modes of operation (Excluding the
+developers that know not to use ECB mode).  Let's analyze a few
+possibilities. 
+\begin{itemize}
+\item[(a)] [10 points] The classic book ``Applied Cryptography,'' by
+  Bruce Schneier, lists several reasons ECB is not secure, one of
+  which is that the same plaintext block always encrypts to the same
+  ciphertext block.  One way to avoid this would be to incorporate a
+  counter into every block, so that no two blocks are the same.
+  Define the ECBC (ECB with counter) mode as follows:  Let $E$ be a
+  block cipher on $\ell$-bit blocks, and define $\enc_K(m_1,\dots,m_t
+  \in \{0,1\}^{t \times\ell/2}) = E_K(\langle 1 \rangle||m_1),
+  E_K(\langle 2\rangle||m_2),\dots,E_K(\langle t\rangle||m_t)$, where
+  $\langle i \rangle$ is the $\ell/2$ bit encoding of the integer
+  $i$.  Prove that this scheme is not IND-CPA secure.  On the other
+  hand, sketch a proof of security for up to $2^{\ell/8}$ message
+  blocks if the counter is randomly selected for each message.
+
+  (Notice that even when $\ell=128$ this is a weak security guarantee)
+
+\item[(b)] [5 points]  Suppose that to reduce message expansion, the
+  randomized counter from ECBC is XORed with the plaintext blocks
+  rather than prepended, giving the scheme $\enc_K(m_1,\dots,m_t) =$
+  ``Pick $R \leftarrow \{0,1\}^\ell$ and output $R,
+  E_K(\langle R+1 \rangle \oplus m_1), E_K(\langle R+2\rangle \oplus
+  m_2 ), \dots, E_K(\langle R+t \rangle \oplus m_t)$,''  Prove that
+  this scheme is not IND-CPA secure.
+
+\item[(c)] [5 points] On the other hand, let RXECB be defined by the
+  following encryption algorithm:
+\begin{tabbing}
+$\enc_K(m_1,\dots,m_t)$ =\\
+\ \ \=For $i \in \{1,\dots,t\}$, do:\\
+\>\ \ \=Choose $r_i \in_R \{0,1\}^\ell$ \\
+\>\> Set $p_i = E_K(r_i \oplus m_i)$.\\
+Output: $r_1,p_1,r_2,p_2,\dots,r_t,p_t$.
+\end{tabbing}
+Prove that RXECB is IND-CPA secure (up to $2^{\ell/4}$ message blocks)
+if $E$ is a PRP.
+
+\item[(d)] [Extra Credit: 5 points] Another reason not to use ECB
+  according to Schneier's book is that it does not protect against
+  simple changes to messages, such as re-ordering or omitting the
+  blocks.  For this reason, the book recommended CBC mode as an
+  alternative.  Suppose we have a ciphertext $c^* = c_0,c_1,\dots,c_t$ that
+  was encrypted using a secure block cipher in CBC mode.
+  \begin{itemize}
+  \item[(i)] Show how to compute the ciphertext for an arbitrary
+    (block) suffix of the plaintext.
+  \item[(ii)] Show how to compute a ciphertext that has an
+    arbitrary bit flipped in the first plaintext block.
+  \end{itemize}  
+\end{itemize}
+
+\question{Cryptanalysis: Un-chain my block} [25 points] Perhaps
+because of Schneier's endorsement, or because it just seems more
+complicated, CBC mode is a popular choice among fielded
+cryptosystems.  Unfortunately, CBC can also be fairly easy to get
+wrong: real implementations have turned out to be vulnerable to
+several unfortunate attacks.
+\begin{itemize}
+\item[(a)] [10 points] The proof that CBC mode is IND-CPA secure
+  relies on the use of random, unpredictable IVs.  However, in
+  practice several schemes have used IVs that can be predicted in
+  advance.  (For example, some implementations initially choose a
+  random IV $R$ then use $R+1$, $R+2$, etc. for subsequent IVs; others
+  use the last block of the previous ciphertext as the IV for the next
+  message)
+
+  Suppose we modify the IND-CPA game so that the challenger provides
+  the adversary with the IV to be used {\em before} the adversary
+  chooses the plaintext messages $m_0,m_1$. Show how to construct a
+  distinguisher for this game.  (e.g., an IND-CPA adversary that can
+  distinguish between $\enc_K(m_0)$ and $enc_K(m_1)$ in this game)
+
+\item[(b)] [15 points] For this problem, you'll develop code that
+  exploits predictable IVs to recover a secret message using chosen
+  plaintexts.  Your program should interact with the following three
+  scripts:
+  \begin{itemize}
+    \item \verb#/class/csci5471/hw2/nextIV# writes an 8-byte IV to the
+      standard output and resets the plaintext buffer.
+    \item \verb#/class/csci5471/hw2/buffer# reads up to 16 bytes from
+      its standard input, and writes them to the plaintext
+      buffer.\footnote{{\tt buffer} is destructive: calling a second
+        time completely eradicates the old buffer}
+    \item \verb#/class/csci5471/hw2/encrypt#  appends an 8-byte
+      ``secret string'' to the plaintext buffer, pads the buffer
+      length to a multiple of 8 with {\tt 0}-bytes, CBC encrypts the
+      buffer (using Triple DES) with the current IV, and writes the ciphertext (including
+      IV) to its standard output.  The IV and buffer are cleared.\footnote{if called with no IV, a random IV is chosen.} 
+  \end{itemize}
+  You can see in \verb#/class/csci5471/hw2/examples/iv.{c,py2,py3,java,ml}# examples of
+  how to wrap these programs in function calls in some of the most
+  popular ``favorite languages'' expressed on the self-assessment.
+  (As in homework 1, each student will have a different, but fixed
+  secret)
+
+  Your canvas submission should include the secret string you found,
+  and describe the algorithm you used at a high level.  The main
+  submission should be accompanied by a source file (in your language
+  of choice, provided that it will compile on a CSELabs Linux host)
+  implementing your algorithm.
+
+\item[(c)] [Extra Credit: 10 points] Another very common failure mode
+  for CBC is the {\em padding oracle attack}.  The attack, originally
+  due to Vaudenay, is described in
+  \url{http://www.iacr.org/archive/eurocrypt2002/23320530/cbc02_e02d.pdf}~.
+  Instances of this attack have proven to be pervasive, showing up in many
+  standard networking protocols and libraries, and other surprising
+  places such as popular web application frameworks.
+
+  For this problem, you should develop an implementation of Vaudenay's
+  padding attack.  Your program should interact with the following scripts:
+  \begin{itemize}
+  \item \verb#/class/csci5471/hw2/cbc# will pad (using PKCS\#7) an eight-byte
+    ``secret message'' and write the CBC encryption (using Triple
+    DES) of the message to the standard output.  (Each student gets
+    a different, fixed ciphertext)
+    
+  \item \verb#/class/csci5471/hw2/pad_oracle# reads up to 24 bytes
+    of ciphertext from its standard input, attempts to decrypt the
+    bytes, and exits with status 0 if there is no padding error and
+    status 1 otherwise.
+  \end{itemize}
+  \verb#/class/csci5471/hw2/examples/pad.{c,py,java}# give examples of how to
+  wrap \verb#pad_oracle# as a function call.
+  
+  Your canvas submission for this problem should include the secret
+  message, and a separate source file implementing the padding attack.
+\end{itemize}
+
+
+\end{document}
