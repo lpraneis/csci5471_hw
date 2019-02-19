@@ -17,6 +17,7 @@
 \newcommand{\cA}{\mathcal{A}}
 \newcommand{\bbM}{\mathbb{M}}
 \newcommand{\bbK}{\mathbb{K}}
+\newcommand{\X}{\mathbb{X}}
 \newcommand\NetIDa{prane001}          
 % \newcommand\NetIDb{collab?}          
 % \newcommand\NetIDc{collab?}          
@@ -129,7 +130,19 @@
       \Pr[X_i \neq X_{i+1} \forall i: 1\leq i < n] =\Big(\frac{k-1}{k}\Big)^{n-1}
     \]
   \item[(b)]
-    %TODO
+    We are given the inequality: $\Pr[X > k \cdot \E[X]]  \leq \frac{1}{k}$. For sake of 
+    proof, let $t = k\E[X]$. The proof is as follows:
+    \begin{align}
+      &\Pr[x > \frac{t}{\E[X]} \cdot \E[X]] \leq \frac{\E[X]}{t} \\
+      &\Pr[x > t] \leq \frac{\E[X]}{t} 
+    \end{align}
+    If we consider $x \in S$, we can write the expectation as:
+    \begin{gather}
+    \E[X] = \sum_{x \in S} s \cdot \Pr[X=s], \\
+    \geq \sum_{x \in S, x \leq t} 0 \cdot \Pr[X=s] + \sum_{x \in S, x > t} s \cdot \Pr[X=s] \\
+    = s \cdot \Pr[X > t] \geq t \cdot \Pr[X > t] \text{ as $s > t$ for all $X$}
+  \end{gather}
+  And thus the proof is complete.
   \item[(c)] 
     We can use the Bonferroni Inequality \cite{BPS} here to prove this probability. 
       \begin{align}
@@ -143,6 +156,11 @@
       \text{ And thus the inequality is proven.} \nonumber
   \item[(d)]
     %TODO
+    We can prove the union bound using Markov's Inequality. Let $E_1, E_2, \dots, E_i$ be
+    events and let $\X$ be the number of events that occur. Using the definition of 
+    expectation, we know $\E[\X] = \sum_{i=1}^{n} \Pr[\X_i]$. Additionally, using Markov's 
+    Inequality, $\Pr[\X \geq 1] \leq \E[\X] $. By the definition of union, we have that 
+    $\Pr[\X \geq 1] = \Pr[\bigcup_{i=1}^{n} E_i]$, thus the proof is complete.
   \item[(e)]
     %TODO
   \item[(f)]
@@ -217,6 +235,7 @@
     created by users, making it less predictable.
 \end{itemize}
 
+\pagebreak
 \question{Cryptanalysis: The Two Time Pad} 
 \begin{algorithm}
   \caption{Recover Plaintexts}
@@ -248,7 +267,6 @@ I SAW FIREWORKS FROM THE FREEWAY AND BEHIND CLOSED EYES I CANNOT MAKE THEM GO AW
 
 \paragraph{Plaintext 2}
 DOOM WHETHER SHE MUST RETURN TO HER FATHERS HOME OR FOLLOW THE CHIEFTAINS TO THE LAND OF HELLAS NOW WHEN THE MAIDEN HAD MUSED UPON ALL THIS SHARP ANGUISH SHOOK HER HEART UNCEASINGLY AND QUICKLY SHE CALLED FORTH JASON ALONE APART FROM HIS COMRADES AND LED HIM ASIDE UNTIL THEY WERE FAR AWAY AND BEFORE HIS FACE UTTERED HER SPEECH ALL BROKEN WITH SOBS WHAT IS THIS PURPOSE THAT YE ARE NOW DEVISING ABOUT ME O SON OF AESON HAS THY TRIUMPH UTTERLY CAST FORGETFULNESS UPON THEE AND RECKEST THOU NOTHING OF ALL THAT THOU SPAKEST WHEN HELD FAST BY NECESSITY WHITHER ARE FLED THE OATHS BY ZEUS THE SUPPLIANTS GOD WHITHER ARE FLED THY HONIED PROMISES FOR WHICH IN NO SEEMLY WISE WITH SHAMELESS WILL I HAVE LEFT MY COUNTRY THE GLORIES OF MY HOME AND EVEN MY PARENTSTHINGS THAT WERE DEAREST TO ME AND FAR AWAY ALL ALONE I AM BORNE OVER THE SEA WITH THE PLAINTIVE KINGFISHERS BECAUSE OF THY TROUBLE IN ORDER THAT I MIGHT SAVE THY LIFE IN FULFILLING THE CONTESTS WITH THE OXEN AND THE EARTHBORN MEN LAST OF ALL THE FLEECEWHEN THE MATTER
-\pagebreak
 %TODO: Uncomment!
 % \printbibliography
 \end{document}
