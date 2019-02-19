@@ -131,7 +131,16 @@
   \item[(b)]
     %TODO
   \item[(c)] 
-    %TODO
+    We can use the Bonferroni Inequality \cite{BPS} here to prove this probability. 
+      \begin{align}
+      & \Pr[A] \leq \Pr[A|B] + \Pr[\bar{B}] \\   
+      & \Pr[A] \leq \Pr[A|B] + 1 - \Pr[B] \text{ by definition of complement} \\
+      & \Pr[A] + \Pr[B] + 1 \leq \frac{\Pr[A\cap B]}{\Pr[B]} \\
+      & \Pr[A] + \Pr[B] -1 = \Pr[A \cap B] \text{ by Bonferroni Inequality} \\
+      \text{Because } 0 \leq \Pr[B] \leq 1&, \nonumber \\
+      &\Pr[A \cap B] \leq \frac{\Pr[A \cap B]}{\Pr[B]} \\
+      \end{align}
+      \text{ And thus the inequality is proven.} \nonumber
   \item[(d)]
     %TODO
   \item[(e)]
@@ -185,7 +194,6 @@
       \item $Steve(A) \longrightarrow S: p_A, T_A$
     \end{enumerate}
   \item[(d)]
-    %TODO
     In this case, Steve cannot exactly replicate the exploit of part (c), as he needs the user 
     password in order to encrypt the first message. However, if Steve can capture both the first 
     and the third step in the Server Login Phase, he can still identify himself to the server by 
