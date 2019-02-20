@@ -7,7 +7,7 @@
 \usepackage{amssymb}
 \usepackage{url}
 \usepackage{hyperref}
-
+\usepackage{mathtools}
 \usepackage{amsfonts}
 \usepackage{fancyhdr}
 \newcounter{qnum}
@@ -21,6 +21,7 @@
 \newcommand\NetIDa{prane001}          
 % \newcommand\NetIDb{collab?}          
 % \newcommand\NetIDc{collab?}          
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
 
 %Bibliography
 \usepackage{biblatex}
@@ -155,16 +156,21 @@
       \end{align}
       \text{ And thus the inequality is proven.} \nonumber
   \item[(d)]
-    %TODO
     We can prove the union bound using Markov's Inequality. Let $E_1, E_2, \dots, E_i$ be
     events and let $\X$ be the number of events that occur. Using the definition of 
     expectation, we know $\E[\X] = \sum_{i=1}^{n} \Pr[\X_i]$. Additionally, using Markov's 
     Inequality, $\Pr[\X \geq 1] \leq \E[\X] $. By the definition of union, we have that 
     $\Pr[\X \geq 1] = \Pr[\bigcup_{i=1}^{n} E_i]$, thus the proof is complete.
   \item[(e)]
-    %TODO
-  \item[(f)]
-    %TODO
+    We are looking for the following probability: $\Pr[Y_t \geq m]$. We can use Markov's 
+    Inequality to find this bound.
+    \begin{gather}
+      \Pr[Y_t \geq m] \leq \frac{\E[Y_t]}{m} \longrightarrow  \Pr[Y_t \geq m] \leq 
+      \frac {1}{\ceil{\frac{n + k}{k}}} \cdot \E[Y_t]
+      < \frac{k}{n+k} \E[Y_t]
+    \end{gather}
+    And since the expected value of $Y_t$ is $\frac{n}{k}$, we have that 
+    $\Pr[Y_t \geq m] < 1 + \frac{n}{k}$
 \end{itemize}
 
 \question{Identification and Key Exchange Protocols} 
@@ -268,5 +274,5 @@ I SAW FIREWORKS FROM THE FREEWAY AND BEHIND CLOSED EYES I CANNOT MAKE THEM GO AW
 \paragraph{Plaintext 2}
 DOOM WHETHER SHE MUST RETURN TO HER FATHERS HOME OR FOLLOW THE CHIEFTAINS TO THE LAND OF HELLAS NOW WHEN THE MAIDEN HAD MUSED UPON ALL THIS SHARP ANGUISH SHOOK HER HEART UNCEASINGLY AND QUICKLY SHE CALLED FORTH JASON ALONE APART FROM HIS COMRADES AND LED HIM ASIDE UNTIL THEY WERE FAR AWAY AND BEFORE HIS FACE UTTERED HER SPEECH ALL BROKEN WITH SOBS WHAT IS THIS PURPOSE THAT YE ARE NOW DEVISING ABOUT ME O SON OF AESON HAS THY TRIUMPH UTTERLY CAST FORGETFULNESS UPON THEE AND RECKEST THOU NOTHING OF ALL THAT THOU SPAKEST WHEN HELD FAST BY NECESSITY WHITHER ARE FLED THE OATHS BY ZEUS THE SUPPLIANTS GOD WHITHER ARE FLED THY HONIED PROMISES FOR WHICH IN NO SEEMLY WISE WITH SHAMELESS WILL I HAVE LEFT MY COUNTRY THE GLORIES OF MY HOME AND EVEN MY PARENTSTHINGS THAT WERE DEAREST TO ME AND FAR AWAY ALL ALONE I AM BORNE OVER THE SEA WITH THE PLAINTIVE KINGFISHERS BECAUSE OF THY TROUBLE IN ORDER THAT I MIGHT SAVE THY LIFE IN FULFILLING THE CONTESTS WITH THE OXEN AND THE EARTHBORN MEN LAST OF ALL THE FLEECEWHEN THE MATTER
 %TODO: Uncomment!
-% \printbibliography
+\printbibliography
 \end{document}
