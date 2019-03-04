@@ -1,0 +1,151 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{hyperref}
+
+\usepackage{amsfonts}
+\newcounter{qnum}
+\newcommand{\question}[1]{\stepcounter{qnum}\bigskip\noindent{\bf \arabic{qnum}. #1.}}
+
+\newcommand{\E}{\mathop{\textrm{E}}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\bbM}{\mathbb{M}}
+\newcommand{\bbK}{\mathbb{K}}
+\newcommand{\enc}{\textsf{Enc}}
+\newcommand{\dec}{\textsf{Dec}}
+\newcommand{\gen}{\textsf{Gen}}
+\newcommand\NetIDa{prane001}          
+
+\begin{document}
+\begin{center}
+  {\Large \bf CSci 5471: Modern Cryptography}
+\end{center}
+{\bf Homework 2} \hfill {\bf due: March 7, 2019}
+\newline
+{\bf \NetIDa} \hfill  
+\medskip
+\hrule
+\medskip
+
+\newcommand{\fsec}[1]{\textsf{Fsec}_{#1}}
+\newcommand{\adv}[1]{\textsf{Adv}({#1})}
+\newcommand{\st}{\textsf{st}} \newcommand{\evolve}{\textsf{evolve}}
+\question{Stream Ciphers, Pseudorandomness, and Distinguishers} [15 points] 
+\begin{itemize}
+\item[(a)] 
+  $G$ is a pseudorandom generator iff: $| \Pr[D(s) =1 ] - \Pr[D(r) =1]| \leq negl(n)$
+  Via p.62 of \textit{Katz and Lindell}, we need to prove the three properties of a
+  PRG:
+  \begin{enumerate}
+    \item{} $G(s, 1^n)$ outputs a stream of length $n$
+    \item{} $\forall n l(n) > n$
+    \item{} $\forall PPT D, \exists negl s.t. | \Pr[D(G(s))=1] - \Pr[D(r)=1]| \leq negl(n)$
+  \end{enumerate}
+  The first two come from the definition of $\textsf{init}, \textsf{evolve}$. The proof of the PRG
+  property then comes from the 3rd property. We can prove this using the given statement that:
+  $\Pr[\fsec{\cA,G}(n)=1] \leq \frac{1}{2} + \varepsilon(n)$.
+  \begin{align}
+ & \Pr[\fsec{\cA,G}(n)=1] \leq \frac{1}{2} + \varepsilon(n) \rightarrow \\
+   &|\Pr[\fsec{\cA,G}(n)=1]  - \frac{1}{2}| \leq \varepsilon(n).\\
+    \text{Since $\Pr[D(r) =1] = \frac{1}{2}$}, &\nonumber\\
+   &|\Pr[\fsec{\cA,G}(n)=1]  - \Pr[D(r)=1] |\leq \varepsilon(n).\\
+   &|\Pr[D(G(s))=1] - \Pr[D(r)=1]| \leq \varepsilon(n).
+\end{align}
+This conclusion comes from the usage of the Forward Security definitions in modeling a 
+PRG, where $D$ is a distinguished that uses \evolve(.) and $\textsf{init}(.)$ to follow
+through the forward security game.
+\item[(b)]
+  Let $G(s)$ be the oracle for the Enigma Machine and $\mathcal{F}$ be a truly random function.
+  We want to find $\adv{D}$. The definition says that 
+  $\adv{D} = | \Pr[D(\mathcal{F})=1] - \Pr[D(G(s)=1]|$ and so we can find the probabilities below.
+  Let a Distinguisher, D, return 1 if it was playing
+  against the $G(s)$ and 0 if it was playing against a truly random function.
+  $\Pr[D(\mathcal{G})=1] = 1$, as if there is not a zero word, the Distinguisher can tell
+  with probability 1. The next probability depends on whether or not a zero appears
+  from the $\mathcal{F}$, which is shown below.
+
+  $\Pr[D(F)=1] = 1 - \left( \frac{1}{2^w}\right)^{\frac{m* 2^w}{w}}$
+  and so, $\adv{D} =\left( \frac{1}{2^w}\right)^{\frac{m* 2^w}{w}}$
+\item[(c)] 
+  Let our distinguisher, $D$ work as follows:
+  \begin{enumerate}
+    \item Get a stream of words
+    \item Find every pair of words
+    \item Output 1 if there is a pair of zero bytes and 0 if there is not
+  \end{enumerate}
+  Using $\mathcal{F}$ as the random function and $R$ as the $RC4$ implementation.
+  We can calculate the $\adv{D}$ with the two probabilities below.
+  \begin{align}
+    \text{Given: } m*2^{16} \text{ total words}& \nonumber \\
+    \text{Given: } m*2^{16} -1 \text{ total pairs}& \nonumber \\
+    \Pr[D(\mathcal{F}) = 1]& = \frac{1}{2^{64}} ^ {m*2^{16} -1 } \nonumber \\
+    \Pr[D(R) = 1]& = \left(\frac{1}{2^{16}} + \frac{1}{2^{24}} \right) ^ {m*2^{16} -1 } \nonumber \\
+    \adv{D} =&| \frac{1}{2^{64}} ^ {m*2^{16} -1 } -  \left(\frac{1}{2^{16}} + \frac{1}{2^{24}} \right) ^ {m*2^{16} -1 } |  \nonumber \\
+  \end{align}
+\end{itemize}
+
+\question{Balls and Bins and Random Mappings} [20 points]
+\begin{itemize}
+\item[(a)] 
+\item[(b)]
+\item[(c)] 
+\item[(d)] 
+\item[(e)] 
+\end{itemize}
+
+\question{Block Ciphers, PRPs and PRFs} [20 points]
+\begin{itemize}
+\item[(a)] 
+\item[(b)]
+\item[(d)] 
+\end{itemize}
+
+\question{Block Cipher Modes} [20 points]  One of the common mistakes
+that software developers make in their use of crypto is trying to
+design their own block cipher modes of operation (Excluding the
+developers that know not to use ECB mode).  Let's analyze a few
+possibilities. 
+\begin{itemize}
+\item[(a)] 
+\item[(b)]
+\item[(c)]
+\item[(d)] 
+\end{itemize}
+
+\question{Cryptanalysis: Un-chain my block} [25 points] Perhaps
+because of Schneier's endorsement, or because it just seems more
+complicated, CBC mode is a popular choice among fielded
+cryptosystems.  Unfortunately, CBC can also be fairly easy to get
+wrong: real implementations have turned out to be vulnerable to
+several unfortunate attacks.
+\begin{itemize}
+\item[(a)] 
+\item[(b)] 
+
+  \textbf{Secret String}: 
+      'Zeppelin'
+
+  \textbf{Algorithm}:
+      At a high level, the algorithm used exploited the fact that each
+      block encrytion key was the same throughout the rounds in addition to 
+      the fact that we could know the IV ahead of time. The algorithm worked as follows:
+  \begin{itemize}
+    \item Find the IV for the next encrytion
+    \item Set the first block of the plaintext as the IV
+    \item Set the second block of the plaintext as all zeros, except the byte of
+      the secret string currently being guessed
+    \item Find the encryption of 0..0B where B is the byte of the secret string currently
+      being guessed
+    \item Then, try all 256 possibilities for this byte, encrypting each possibility to find 
+      a match.
+    \item Once a match is found, add this byte to the answer byte string and move on to 
+      guessing the next byte
+    \item After all bytes are found, return the bytestring
+  \end{itemize}
+\item[(c)] 
+
+\end{itemize}
+
+\end{document}
