@@ -89,17 +89,48 @@ through the forward security game.
 \question{Balls and Bins and Random Mappings} [20 points]
 \begin{itemize}
 \item[(a)] 
+  Let $X_1 , X_2, \cdots , X_n $ be the indicator variable for whether or not a bin is empty.
+  Let $Y = X_1 + X_2 + \cdots + X_n$. We want to find $\E[Y]$. 
+  \[
+    \Pr[\bar{X_i}] = (1 - \frac{1}{n})^m, \\
+    \Pr[X_i] = 1 - (1 - \frac{1}{n})^m, 
+  \]
+  By the linearity of expectation, $\E[Y] = n - n(\frac{n-1}{n})^m$ \\
+  And so,   $\E[\geq 1] = n - n\left(\frac{n-1}{n}\right)^m$
 \item[(b)]
+  Simply substituting in, 
+  \[
+    \E[\geq 1] = n - n\left(\frac{n-1}{n}\right)^{\alpha*n} 
+  \]
 \item[(c)] 
+  TODO
 \item[(d)] 
-\item[(e)] 
+  Since y is uniformly distributed, we can assume probability of 
+  $y \equiv t \pmod p = \frac{1}{p}$, 
+  where $t$ ranges over the values of $\{0 , \cdots, p-1\}$. Since $f$ has a degree bound
+  by $d$, it has at most $d$ roots. We can bound this probability via the following realizaton:
+  \[
+    \Pr[f(x) \equiv y] \leq \Pr[f(x) \equiv 0]
+  \]
+  This comes via choosing a fixed y. Since $f(x) \equiv 0$ has d roots, we can conclude
+  \[
+    \Pr[f(x) \equiv y] \leq \Pr[f(x) \equiv 0] \leq \frac{d}{p}
+  \]
+\item[(e)] TODO - EC 
 \end{itemize}
 
 \question{Block Ciphers, PRPs and PRFs} [20 points]
 \begin{itemize}
 \item[(a)] 
-\item[(b)]
-\item[(d)] 
+  $E' : \{0,1\}^{k+\ell} \times\{0,1\}^\ell \rightarrow \{0,1\}^\ell$
+  The key length for this block cipher is : $k +\ell$ and the block
+  length is : $\ell$. We define $E'_{K||P}(x) = E_K(P\oplus x)$. We can break this 
+  scheme the exact same way as if it didn't have the pad by exploiting the fact that some
+  of the $P$ will be the zero word, $0^\ell$. We can simply use the $2^k$ trial decryptions
+  by guessing $E_k(P \oplus x)$ where $P = 0^\ell$ so $P \oplus x = x$. Therefore, 
+  $E'_{K||P}(x) = E_k(x)$, which can be broken in $2^k$ trials.
+\item[(b)] TODO
+\item[(d)] TODO - EC
 \end{itemize}
 
 \question{Block Cipher Modes} [20 points]  One of the common mistakes
@@ -108,10 +139,10 @@ design their own block cipher modes of operation (Excluding the
 developers that know not to use ECB mode).  Let's analyze a few
 possibilities. 
 \begin{itemize}
-\item[(a)] 
-\item[(b)]
-\item[(c)]
-\item[(d)] 
+\item[(a)] TODO 
+\item[(b)] TODO
+\item[(c)] TODO
+\item[(d)] TODO  - EC
 \end{itemize}
 
 \question{Cryptanalysis: Un-chain my block} [25 points] Perhaps
@@ -121,7 +152,7 @@ cryptosystems.  Unfortunately, CBC can also be fairly easy to get
 wrong: real implementations have turned out to be vulnerable to
 several unfortunate attacks.
 \begin{itemize}
-\item[(a)] 
+\item[(a)] TODO
 \item[(b)] 
 
   \textbf{Secret String}: 
@@ -144,7 +175,7 @@ several unfortunate attacks.
       guessing the next byte
     \item After all bytes are found, return the bytestring
   \end{itemize}
-\item[(c)] 
+\item[(c)] TODO - EC 
 
 \end{itemize}
 
