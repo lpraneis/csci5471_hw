@@ -103,7 +103,15 @@ through the forward security game.
     \E[\geq 1] = n - n\left(\frac{n-1}{n}\right)^{\alpha*n} 
   \]
 \item[(c)] 
-  TODO
+  Based on the fact that the size of $|\{0,1\}^k| = 2^k$ and that $|\{0,1\}^{2k}| = 2^{2k+1}$,
+  we can calculate the total number of functions as $(2^{2k+1})^{2^k}$. This, in addition to the 
+  formula for the number of one-to-one functions between two sets ( $f:A\rightarrow B \mapsto 
+  \frac{|B|!}{(|B| - |A|)!}$), we can construct a probability that a randomly chosen function
+  is one to one as the following, which is greater than .5 for all $k > 0$. Thus, the probability is
+  greater than $\frac{1}{2}$ for all $k > 0$.
+  \[
+    \frac{\left(2^{\left(2k+1\right)}\right)!}{\left(2^{\left(2k+1\right)}-\ 2^k\right)!\ \cdot\ \left(2^{\left(2k+1\right)^{2^k}}\right)} \geq \frac{1}{2}
+  \]
 \item[(d)] 
   Since y is uniformly distributed, we can assume probability of 
   $y \equiv t \pmod p = \frac{1}{p}$, 
