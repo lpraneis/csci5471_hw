@@ -69,6 +69,22 @@ date above.
 \question{Hash cycles} [15 points]
 \begin{itemize}
 \item[(a)]  TODO
+  \begin{itemize}
+    \item max cycleLength:  195
+    \item avg cycleLength:  45.22222222222222
+    \item min cycleLength:  2
+    \item max tailLength:  507
+    \item avg tailLength:  169.88694353399993
+    \item components:  9
+  \end{itemize}
+  Build Requirements: (python3, pip3, package networkx)
+  \\
+  This program works by modelling the hash function as a graph, and using various graph 
+  algorithms to find the amount of cycles, the tail length, and the component breakdown.
+  Takes ~2 minutes to find all of the necessary information. The terminal points are determined
+  to be nodes with in-degree 0, and the tails are calculated as the distance from each terminal
+  point to the closest point on the cycle in that component. 
+  TODO - Finish explanaion
 \item[(b)]  TODO
 \item[(c)]  TODO - EC 
 \item[(d)]  TODO - EC 
