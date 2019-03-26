@@ -28,47 +28,109 @@
 {\bf \NetIDa} \hfill  
 \hrule
 \medskip
-\noindent{\bf Ground Rules.} You may choose to complete these
-homeworks in a group of up to three students.  Each group should turn
-in {\bf one} copy with the names of all group members on it.  You may
-use any source you can find to help with this assignment but you {\bf
-  must} explicitly reference any source you use besides the lecture
-notes or textbook.  Electronically typeset copies of your solution
-should be submitted on the course moodle by 11:59\textsc{pm} on the
-date above.
-
 \question{Broken MACs} [30 points]
 \begin{itemize}
-\item[(a)] TODO
-\item[(b)] TODO
-\item[(c)] TODO
-\item[(d)] TODO - EC
+\item[(a)] $\textsf{aMAC}$  is not secure as an adversary can create a new, valid MAC from
+  existing queries to the $\textsf{aMAC}$ challenger. For example, given 
+  $\textsf{aMAC}_k(m_1 || m_2)$ and $\textsf{aMAC}_k(m_3 || m_4)$, an adversary can create  a
+  a valid $\textsf{aMAC}_k{m_1 || m_4}$ as it would be $ F_K(m_1) ||  F_K(F_K(m_4))\ .$ This 
+  would be accepted by $\textsf{Ver}_k$, and thus would represent a valid forgery after only 
+  2 queries to the oracle.
+\item[(b)] $\textsf{bMAC}$ is insecure as with $\textsf{bMac}_K(m_1 || \cdots ||
+  m_\ell) = r || \bigl( F_K(r) \oplus F_K(\langle 1 \rangle || m_1) \oplus
+  \cdots \oplus F_K(\langle \ell \rangle || m_\ell) \bigr) \ ,$ we can forge a MAC by 
+  considering $F_k(\langle x \rangle || m_x)$, where $\langle x \rangle$ is the first
+  $\frac{k}{2}$ bits of $r$, gotten from our initial query to the MAC oracle and $m_x$ is the 
+  second $\frac{k}{2}$ bits of $r$. We then replace r with $\langle x \rangle || m_x$, to get
+  $$\textsf{bMac}_{K - forged} = \langle x \rangle || m_x || \bigl( F_K(\langle x \rangle || m_x)
+    \oplus
+    F_K(\langle 1 \rangle || m_1) \oplus \cdots \oplus F_K(r) \oplus \cdots \oplus 
+  F_K(\langle \ell \rangle || m_\ell) \bigr) \ ,$$
+  This is possible as $r$ is $k$-bits and if we fill m to the maximum $\ell$, we are guaranteed
+  to have a value of $i$ for $m_i$ equal to the first $\frac{k}{2}$ bits of $r$. Since $\oplus$ is
+  commutative, the tag will be the same but the message will be different, breaking the MAC.
+
+\item[(c)] Because $H$ is modelled as a random oracle, we can query it for any message to
+  get $H(m)$ and thus know the key for $E$. If the key for $E$ is known, and E is an
+  ideal cipher, which is deterministic, an adversary can forge a $\textsf{dMAC}_k$ by 
+querying $E_{H(m)}(.)$ with different values of the keyspace until the $E_{H(m)}(K) =$ 
+tag on input. Then, with $K$ known, we can forge a tag on any message, $m$.
 \end{itemize}
 
 \question{Broken Hashes} [20 points]
 \begin{itemize}
-\item[(a)] TODO
-\item[(b)] TODO
-\item[(c)] TODO
+  \item[(a)] Because $E_k(M_{x-1} \oplus C_{x-2}) = C_{x-1}$, we can construct two messages, 
+    $x_1, x_2$ such that $C_{x-1}$ for a given $x$ in $x_1$ is equal to $C_{x-1}$ for a given
+    $x$ in $x_1$ as $E_k(M'_{x-1} \oplus C'_{x-2}) = E_k(M_{x-1} \oplus C_{x-2}) $. This is 
+    possible as we can choose $m$ such that it produces the same ciphertext after being passed
+    into $E_k^i$. Because of this, the hash function is not collision resistant.
+\item[(b)] If we have a colliding message of $H$, it also collides in $H_1$ and $H_2$, as $H$ is 
+  the concatenation of $H_1$ and $H_2$. Thus, if $H_1$ or $H_2$ is collision resistant, so will 
+  be the corresponding part of $H$, making $H$ collision resistant to the same degree of security
+  as the $H_b$ that is resistant.
+\item[(c)] Even if $H_1$ is a TRF, there exists an $H_2$ such that $H'$ is not preimage resistant.
+  We can prove this by defining an $H$ as follows:
+  \begin{align}
+    H'(x) & = H_1(x) || H_2(x) \\ \nonumber
+    H_1(x) & = \textsf{TRF}\\ \nonumber
+    H_2(x) & = H_1(x) \oplus \ell-bits(x)
+  \end{align}
+  There are $2^t$ possibilities for $x$ as we know $H_1(x)$ and $H_2(x)$ from $H(x)$. Thus, we
+  simply have to guess the $t$ bits that we don't know, leaving us with $2^t$ enumerations.
 \end{itemize}
 
 \question{MACs and Hashes together} [15 points]
 \begin{itemize}
-\item[(a)] TODO 
-\item[(b)] TODO 
-\item[(c)] TODO - EC
+  \item[(a)] Since $H$ is collision resistant, we can apply the conclusion of problem 2b to 
+    conclude that $H'(x)$ is collision resistant.
+  \item[(b)] Let us model $H$ as a Merkle-Damg\aa rd construction with $IV = 0^\ell.$ Given
+    $m_1, \cdots , m_\lambda$, we need to prove that $F_k$ is not EUF-CMA secure, e.g, prove
+    that $\Pr[Forge-F_k] \leq \textsf{negl}.$ We can do this by realizing that, for a CMA-Attcker,
+    A, 
+    $$ \Pr[Forge-F_k] \leq \textsf{Adv}(A) * \frac{\lambda^2}{2^\ell}$$
+    $$\Rightarrow \Pr[Forge-F_k] \leq \frac{\lambda^2 *\varepsilon}{2^\ell}$$
+    which is not necessarily negligible, proving that this construction, made from a EUF-CMA MAC
+    and a collision resistant hash family, is not EUF-CMA secure.
+  \item[(c)] If $H$ is modelled as a random oracle, there will be not be a collision unless 
+    $M_k(m_i) = M_k(m_j)$ when $m_i \neq m_j$. However, if $M_k$ is EUF-CMA secure, 
+    $\Pr[forgery] \leq \textsf{negl}$ and so $\Pr[M_k(m_i) = M_k(m_j)] \leq \textsf{negl}$. 
+    Thus, the corresponding $\Pr[collision]$ and $\Pr[F_k-forged]$
+    are both bound by $\textsf{negl}$,and so, $F_k$ is EUF-CMA secure.
 \end{itemize}
 
 \question{MACs and Encryption} [20 points] 
 \begin{itemize}
-\item[(a)] TODO
-\item[(b)] TODO
-\item[(c)] TODO - EC
+  \item[(a)] Let $\textsf{Enc}$ be a CBC mode encryption scheme, which is known
+    to be IND-CPA secure. Now, if we consider $\textsf{M}$ as an EUF-CMA secure MAC, we can
+    construct another MAC, $\textsf{M'}$ such that $\textsf{M'} = b_0 || \textsf{M}$, where 
+    $b_0$ is the first bit of $x$. We can show $\textsf{M'}$ is still EUF-CMA secure by asserting
+    that prepending a bit to a secure MAC doesn't alter its forgability, and since $\textsf{M}$ is
+    EUF-CMA secure, we can guarantee $\textsf{M'}$ to be EUF-CMA secure. Now, with this new MAC, 
+    we can prove that $\enc^{\textsf{M'}}_{K_1,K_2}(x) =\enc_{K_1}(x)||  \textsf{M'}_{K_2}(x)$  
+    is not IND-CPA secure as the first bit of the message is exposed in the MAC. Thus, an adversary
+    can send two messages, $m_0, m_1$ where $b^{m_0}_0 \neq b^{m_1}_0$ and distinguish between them
+    with probability 1.
+\item[(b)] % TODO 4B
+\item[(c)]
+  \begin{itemize}
+    \item[(i)]
+      The ciphertext can still be attacked in a MAC-then-encrypt mode as 
+      $$C = \textsf{Enc}(m||\textsf{HMAC}(m))$$
+      When C is decrypted to get $m||\textsf{HMAC}(m)$, the decryption algorithm must work
+      out the padding for $m$, and thus is vulnerable to padding oracle attacks.
+    \item[(ii)]
+      Encrypt-then-MAC mode still supports unauthenticated encryption as the algorithm
+      first encrypts the message and then (optionally) computes a MAC.  This is secure to 
+      ciphertext attacks as the receiver first validates the MAC before decrypting the message. 
+      This means that an attacker cannot exploit padding attacks on the MAC.
+
+  \end{itemize}
+
 \end{itemize}
 
 \question{Hash cycles} [15 points]
 \begin{itemize}
-\item[(a)]  TODO
+\item[(a)]
   \begin{itemize}
     \item max cycleLength:  195
     \item avg cycleLength:  45.22222222222222
@@ -83,11 +145,13 @@ date above.
   algorithms to find the amount of cycles, the tail length, and the component breakdown.
   Takes ~2 minutes to find all of the necessary information. The terminal points are determined
   to be nodes with in-degree 0, and the tails are calculated as the distance from each terminal
-  point to the closest point on the cycle in that component. 
-  TODO - Finish explanaion
-\item[(b)]  TODO
-\item[(c)]  TODO - EC 
-\item[(d)]  TODO - EC 
+  point to the closest point on the cycle in that component. The other metrics are calculated
+  as averages as the data from the terminal points.
+\item[(b)] Since every value in $\{0, 1\}^*$ has a hashed value, we can consider the hash 
+  function as a graph out nodes with out-degree 1. For a $n-node$ graph, we have $n$ edges
+  as every function has at most $1$ in-degree and $1$ out-degree. Thus, by the definition of
+  a cycle in a directed graph, we are required to have at least one cycle, as the maximum number
+  of edges in such a graph (without cycles) would be $n-1$.
 
 \end{itemize}
 
