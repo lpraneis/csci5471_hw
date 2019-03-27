@@ -114,10 +114,6 @@ tag on input. Then, with $K$ known, we can forge a tag on any message, $m$.
     is not IND-CPA secure as the first bit of the message is exposed in the MAC. Thus, an adversary
     can send two messages, $m_0, m_1$ where $b^{m_0}_0 \neq b^{m_1}_0$ and distinguish between them
     with probability 1.
-% \item[(b)]  We can break this scheme by asking the oracle for the decryption / encryption
-%   of several chosen messages. First, $m^0 = m^0_0 || m^0_1 || 1^B || 0^B$ where $B$ is the 
-%   block length. This will give us $c^0 = IV || \enc(IV \oplus m^0_0) || \cdots || 
-%   \enc(1^B) || \enc(\enc(1^B)), t = \enc(\enc(\enc(1^B))). $ % TODO - Finish 4b
 \item[(b)] Because CBC-MAC requires that the IV not be random, we can exploit the IV 
 for this $\textsf{CBCEncrypt}$ scheme to prove it is not chosen-ciphertext secure. Given a valid
 $\ell-$block message, $m^0$ and ciphertext, tag pair: $\langle c^0, \tau^0 \rangle$,
