@@ -50,6 +50,10 @@
   to have a value of $i$ for $m_i$ equal to the first $\frac{k}{2}$ bits of $r$. Since $\oplus$ is
   commutative, the tag will be the same but the message will be different, breaking the MAC.
 
+  This can also be extended to choosing $r$ specifically with single-block messages. For example,
+  if we set $r=\langle 1\rangle || m_0$ for some $m_0$, we can send the tag
+  $t = \langle 1\rangle || m_0 || 0^k$ for any $m_0$ as $F_k(r) = F_k(\langle 1\rangle || m_0).$
+
 \item[(c)] Because $H$ is modelled as a random oracle, we can query it for any message to
   get $H(m)$ and thus know the key for $E$. If the key for $E$ is known, and E is an
   ideal cipher, which is deterministic, an adversary can forge a $\textsf{dMAC}_k$ by 
@@ -110,7 +114,19 @@ tag on input. Then, with $K$ known, we can forge a tag on any message, $m$.
     is not IND-CPA secure as the first bit of the message is exposed in the MAC. Thus, an adversary
     can send two messages, $m_0, m_1$ where $b^{m_0}_0 \neq b^{m_1}_0$ and distinguish between them
     with probability 1.
-\item[(b)] % TODO 4B
+% \item[(b)]  We can break this scheme by asking the oracle for the decryption / encryption
+%   of several chosen messages. First, $m^0 = m^0_0 || m^0_1 || 1^B || 0^B$ where $B$ is the 
+%   block length. This will give us $c^0 = IV || \enc(IV \oplus m^0_0) || \cdots || 
+%   \enc(1^B) || \enc(\enc(1^B)), t = \enc(\enc(\enc(1^B))). $ % TODO - Finish 4b
+\item[(b)] Because CBC-MAC requires that the IV not be random, we can exploit the IV 
+for this $\textsf{CBCEncrypt}$ scheme to prove it is not chosen-ciphertext secure. Given a valid
+$\ell-$block message, $m^0$ and ciphertext, tag pair: $\langle c^0, \tau^0 \rangle$,
+we know the IV used as $c^0_0$ and the input to the block cipher as $c^0_\ell$. Thus, we can 
+re-use this same tag, $\tau^0$ for any message that ends with the $c^0_\ell$, given that is 
+also a $\ell-$block message. An attacker can exploit the \textsf{Enc}(.) and \textsf{Dec}(.)
+oracles to construct a message with this ending byte, while re-using the tag from the original
+message. Thus the adversary can distinguish messages with probability 1 and forge an arbitrary
+message with advantage 1.
 \item[(c)]
   \begin{itemize}
     \item[(i)]
