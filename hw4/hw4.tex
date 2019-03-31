@@ -1,0 +1,181 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\newcounter{qnum}
+\newcommand{\question}[1]{\stepcounter{qnum}\bigskip\noindent{\bf \arabic{qnum}. #1.}}
+
+\newcommand{\E}{\mathop{\textrm{E}}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\bbM}{\mathbb{M}}
+\newcommand{\bbK}{\mathbb{K}}
+\newcommand{\enc}{\textsf{Enc}}
+\newcommand{\dec}{\textsf{Dec}}
+\newcommand{\gen}{\textsf{Gen}}
+
+\begin{document}
+\begin{center}
+{\Large \bf CSci 5471: Modern Cryptography}
+\end{center}
+{\bf Homework 4} \hfill {\bf due: April 19, 2019}
+\medskip
+\hrule
+\medskip
+\noindent{\bf Ground Rules.} You may choose to complete these
+homeworks in a group of up to three students.  Each group should turn
+in {\bf one} copy with the names of all group members on it.  You may
+use any source you can find to help with this assignment but you {\bf
+  must} explicitly reference any source you use besides the lecture
+notes or textbook.  Electronically typeset copies of your solution
+should be submitted via canvas by 11:59\textsc{pm} on the
+date above.
+
+\question{Number and Group Theory II} [30 points]  
+\begin{itemize} 
+  \item[(a)] [10 points] Let $p$ and $q$ be primes such that $p = rq+1$ for some
+    $r \in \mathbb{N}$.  Prove that for any $x \in \mathbb{Z}_p^*$,
+    $ord(x^r) | q$.
+  \item[(b)] [10 points] Let $p,q,r$ be as in part (a).  Prove that the
+    map $x \mapsto x^r$ is $r$-to-1, i.e. for all $x \in
+    \mathbb{Z}_p^*$, $\left| \{ y \in \mathbb{Z}_p^* | y^r \equiv x^r \pmod p
+    \} \right| = r$. 
+  \item[(c)] [10 points] Let $B = \{\vec{x}_1,\dots,\vec{x}_k\} \subset
+    \mathbb{R}^n$ be a set of $n$-dimensional real vectors, and let
+    $\Lambda(B) = \{ \sum_i a_i \vec{x}_i | a_i \in \mathbb{Z} \}$ denote
+    the set of all integer linear combinations of $B$.  Prove that $\Lambda(B)$
+    is a group under vector addition.
+\end{itemize}
+\question{Diffie-Hellman and Discrete Logarithms} [30 points]
+\begin{itemize}
+\item[(a)] [10 points] Let $p = 2^{31}-1$.  Prove that $7$ generates $\mathbb{Z}_p^*$.
+\item[(b)] [10 points] Program an algorithm to compute discrete
+  logarithms to base $7$ mod $p$.  Let $n = SHA256(\textrm{your CSELabs
+    username})$. Use your algorithm to compute $\log_7 n \bmod p$.
+  Include the code for your program as a separate submission to moodle. 
+
+  The program \verb#/class/csci5471/hw4/dlgen.py# can be used to
+  compute the value $n \bmod p$ (printed to the standard output in decimal) if
+  you want to double-check your result.
+
+\item[(c)] [Extra credit: 10 points] Compute $\log_7 n \bmod
+  2^{80}-65$, or for 5 points compute $\log_7 n \bmod 2^{64}-59$.
+  Explain any modifications used to make your algorithm complete in time.
+
+\item[(e)] [10 points] Let $g^x$ be an Elgamal public key over prime $p=2q+1$,  and $c_1 =
+  \langle g^{y_1}, g^{xy_1}m_1 \rangle$, $c_2 = \langle g^{y_2},
+  g^{xy_2} m_2\rangle$ be a pair of ciphertexts encrypted with this
+  public key.  Describe how to compute a ciphertext $c_3$ for $m_1m_2 \pmod p$
+  without knowing either $m_1$ or $m_2$.  Show how to {\em blind} the
+  resulting ciphertext so that given $c_1,c_2,c_3$ it is hard (under
+  the decisional Diffie-Hellman assumption) to distinguish between the
+  cases that $c_3 = E(m_1m_2)$ and $c_3 = E(m_3)$ where $m_3
+  \not\equiv m_1m_2 \pmod p$.  (An encryption scheme with this
+  property -- the ability to ``mutliply'' the plaintexts -- is called
+  ``multiplicatively homomorphic'')
+
+\item[(f)] [Extra credit: 15 points] Describe how to modify Elgamal
+  encryption so that it is {\em additively homomorphic}, i.e. there is
+  a method to ``sum'' the plaintexts of two ciphertexts.   In order to
+  allow efficient decryption, you will need to restrict the space of
+  plaintexts.  Implement your scheme; it should be able to efficiently
+  handle 8-byte plaintexts.    Your implementation should support the
+  following command-line options:
+  \begin{itemize}
+    \item \verb#genkey nbits pubfile privfile# generates a key pair of
+      {\tt nbits} bits, writing the public key to {\tt pubfile} and
+      the private key to {\tt privfile}.
+    \item \verb#encrypt keyfile msg ctextfile#  encrypts up to 6 bytes of {\tt
+        msg} under the public key found in {\tt keyfile} and writes
+      the result to {\tt ctextfile}.
+    \item \verb#decrypt keyfile ctextfile# decrypts the ciphertext
+      stored in {\tt ctextfile} using the secret key in {\tt keyfile},
+      assuming the plaintext is in $\{0,..,2^{48}\}$, and writes the
+      plaintext to the standard output.
+
+    \item \verb#add keyfile cfile1 cfile2 outfile# adds and blinds the
+      ciphertexts stored in files {\tt cfile1} and {\tt cfile2},
+      assuming they are encrypted under the public key stored in {\tt
+        keyfile}.  The result should be written to {\tt outfile}.
+  \end{itemize}
+\end{itemize}
+
+
+\question{Number Theory II} [15 points]
+\begin{itemize}
+  \item[(a)] Show that in any set of $n+1$ positive integers not exceeding
+    $2n$, there must be two integers that are relatively prime. (Hint: Use
+    the Pigeonhole Principle.) 
+  \item[(b)] Define the Fibonacci sequence of integers as follows:
+    $F_0 = 1, F_1 = 1$ and $F_{n+2} = F_{n+1}+F_n$ for $n \geq 0$. Show that
+    $\gcd(F_i, F_{i+1}) = 1$ for all $i$.
+  \item[(c)] Show that $ax + by = c$ has integer solution $(x, y)$ if
+    $\gcd(a,b) ~|~ c$. 
+  \item[(d)] [Extra Credit: 5 points] Determine whether the congruences $5x \equiv 1
+    \pmod{6}$, $4 x \equiv 13 \pmod{15}$ have a common solution, and find it
+    if they exist. 
+\end{itemize}
+
+\question{RSA and factoring} [25 points] 
+\begin{itemize}
+\item[(a)] [5 points] The files \verb#/class/csci5471/hw4/p# and
+  \verb#/class/csci5471/hw4/q# contain 1024-bit prime numbers encoded
+  using ASN.1 DER encoding.   Compute the decryption exponent
+  corresponding to the encryption exponent represented by the SHA256
+  hash of your CSELabs username.\footnote{If the hash of your username
+    is even, add 1.}  Your main submission should give both
+  numbers in hexadecimal, and any source code used should be included
+  as separate files in your canvas submission.
+
+\item[(b)] [10 points] In the CSELabs directory
+  \verb#/class/csci5471/hw4/vanilla/# there are files labelled
+  \verb#pk0#, \verb#pk1#, \dots, \verb#pk9# and \verb#ct0#,
+  \verb#ct1#, \dots, \verb#ct9#.   The file \verb#ctN# contains a
+  ciphertext encrypted under the 2048-bit RSA public key stored in \verb#pkN#.
+  Public keys are encoded in PEM format (RFC 1421,
+  \url{http://www.ietf.org/rfc/rfc1421.txt}).   
+  Ciphertexts are encrypted using ``vanilla'' (a.k.a. ``textbook'') RSA, and
+  each ciphertext encodes 256 bytes from one of the digital objects in the
+  LAPDOGs database  (\verb#/class/csci5471/hw1/db/#).  Recover the
+  plaintext for the file corresponding to the last digit of your
+  student ID number.  Your main submission should include the
+  recovered plaintext, and describe your approach to recovering the
+  plaintext.  Include any source code used as separate files in your
+  canvas submission.
+
+\item[(c)] [10 points] Alice has a {\em very secret message} $m_A$ to send
+  to Bob, Carol, and Dave, who all have 2048-bit RSA keys
+  ($N_B$,$N_C$, and $N_D$, respectively) with public
+  exponent $e=3$.  To encrypt her message, Alice chooses a random
+  number $r_A \in_R \{0,1\}^{2032}$, computes a 256-bit symmetric key $K_A =
+  H(r_A)$, computes $c_A = E_{K_A}(m_A)$, the encryption of $m_A$
+  using AES-GCM, and sends $r_A^3 \bmod N_B, r_A^3 \bmod N_C, r_A^3
+  \bmod N_D, c_A$ to all recipients.  Describe an attack that will
+  allow anyone who knows the public keys $N_B,N_C,N_D$ to recover
+  $m_A$.   (You may use the fact that computing integer cube roots is easy.)
+
+\item[(d)] [Extra Credit: 10 points] The fastest general-purpose
+  factoring algorithms all work by finding $x \not\equiv \pm y \pmod n$
+  such that $x^2 \equiv y^2 \pmod n$.  For this problem, we'll
+  implement the final step -- computing factors from $x$ and $y$.  The
+  program \verb#/class/csci5471/hw4/sq#  has two command line
+  options.  Running \verb#sq mod# prints a ASN.1 DER INTEGER encoding
+  of a 2048-bit RSA modulus $n$ to the standard output (this has
+  nonprinting characters, so you'll want to redirect it to a file).
+  Running \verb#sq sqrt file# reads an ASN.1 DER INTEGER encoding of
+  an integer $a$ from \verb#file# and prints (an ASN.1 DER INTEGER
+  encoding of) an integer $y$ such that $y^2 \equiv a \pmod n$ to the
+  standard output (this also has nonprinting characters).  Since
+  half of the square roots of $a$ are not $\pm y \bmod n$, then
+  choosing $x \in_R \mathbb{Z}_n^*$, and setting $a = x^2 \bmod n$
+  gives a 50\% chance that $x \not\equiv \pm y \pmod n$.
+
+  Each student has a unique modulus.  Find the factors of your modulus
+  and include an explanation of your method in your main submission,
+  along with any source code used as separate files.
+\end{itemize}
+
+\end{document}
