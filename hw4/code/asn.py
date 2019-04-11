@@ -1,5 +1,7 @@
-import asn1
 from hashlib import sha256
+from binascii import hexlify
+import io
+
 
 def modinv(a, m):
     a = a % m
@@ -21,14 +23,18 @@ def egcd(a, b):
         y, last_y = last_y - quot * y, y
     return last_x, last_y
 
-p_bytes = open('p.txt', 'rb').read()
-q_bytes = open('q.txt', 'rb').read()
+def decode(filename):
+    with open(filename, 'rb') as fin:
+        data = io.BytesIO(fin.read())
+    if data.read(1) != b'\x02':
+        print('Not integer!')
+        return None
+    val = data.getvalue()
+    integer = val[3:]
+    return int(hexlify(integer), 16)
 
-decoder = asn1.Decoder()
-decoder.start(p_bytes)
-tag, p_val = decoder.read()
-decoder.start(q_bytes)
-tag, q_val = decoder.read()
+p_val = decode('p.txt')
+q_val = decode('q.txt')
 
 n = p_val * q_val
 e = int(sha256(b'prane001').hexdigest(), 16)
@@ -38,7 +44,3 @@ print('n', n)
 print('e', e)
 print('d', d)
 print('check', (e * d) % n)
-
-
-
-
