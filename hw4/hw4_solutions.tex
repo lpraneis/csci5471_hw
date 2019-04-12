@@ -30,17 +30,37 @@
 \medskip
 \question{Number and Group Theory II} [30 points]  
 \begin{itemize} 
-  \item[(a)] % TODO 1a
-  \item[(b)] % TODO 1b
-  \item[(c)] % TODO 1c
+  \item[(a)] Since $p = rq+1$, we know $p \equiv 1 \pmod{q}$ as $p-1 \equiv rq$. We will prove
+    that $ord(g) | q$ where $g := x^{r}$. There are 2 cases: 
+    \begin{itemize}
+      \item Case 1: $g = x^r$ is a generator of the group. In this case, $g$ has order $q$.
+        $$g^q \equiv x^{rq} \equiv x^{p-1} \equiv 1 \pmod{p}$$. 
+      \item Case 2: $g$ is congruent to $1 \pmod{p}$. In this case, $g \equiv 1 \pmod{p}$ and so
+        $ord(g) = 1 \rightarrow 1 | q$. 
+    \end{itemize}
+    In either case, $ord(g) = ord(x^r) | q$.
+  \item[(b)] We can prove that $x \in\mathbb{Z}_p^*$, $\left| \{ y \in \mathbb{Z}_p^* 
+    | y^r \equiv x^r \pmod p \} \right| = r$. We have that $(x^i)^r \equiv (x^j)^r \iff 
+    ir \equiv jr \pmod{p-1}$ as $ord(x^r) | q.$ This is equivalent to $p -1 | (i -j) r$ and so
+    $p -1 = rq$ implies $q|(i-j)$. Thus for $j \in \{0, 1, \cdots, p-1\}$, the set $i$ for which
+    $(x^i)^r \equiv (x^j)^r$ is equivalent to $\{j, j+q, j+2q, \cdots, j+(r-1)q\}$ mod $p-1$. Thus
+    there are $r$ values for this set, proving the function is r-to-1.
+  \item[(c)] In order to prove that $\Lambda(B)$ is a group, we must prove 4 properties.
+    \begin{itemize}
+      \item Closure: For $B', B'' \in \Lambda(B)$, $B' + B'' \in \Lambda(B)$ is true as  
+        $a_i' + a_i''$ for $x_i \in \mathbb{Z}$ and thus $\sum(a_i' + a_i'') \subset \Lambda(B)$
+      \item Identity: True as $a_i = 0$ is the identity
+      \item Inverse: True as $\tilde{a_i} = -a_i$, thus $a_i + \tilde{a_i} = 0$ for $i$ in two 
+        vectors.
+      \item Associative: This comes naturally from addition.
+    \end{itemize}
+    Thus, $\Lambda(B)$ is a group.
 \end{itemize}
 \question{Diffie-Hellman and Discrete Logarithms} [30 points]
 \begin{itemize}
 \item[(a)] % TODO 2a
 \item[(b)] % TODO 2b
-\item[(c)] % TODO 2c EC
 \item[(e)] % TODO 2e
-\item[(f)] % TODO 2f EC
 \end{itemize}
 
 
@@ -58,7 +78,6 @@
   \item[(a)] % TODO 4a
   \item[(b)] % TODO 4b
   \item[(c)] % TODO 4c
-  \item[(d)] % TODO 4d
 \end{itemize}
 
 \end{document}
