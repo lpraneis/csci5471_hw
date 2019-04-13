@@ -41,6 +41,6 @@ e = int(sha256(b'prane001').hexdigest(), 16)
 d = modinv(e, n)
 
 print('n', n)
-print('e', e)
-print('d', d)
+print('e', hex(e))
+print('d', hex(d))
 print('check', (e * d) % n)

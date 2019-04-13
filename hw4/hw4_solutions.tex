@@ -1,5 +1,6 @@
 \documentclass[11pt]{article}
 \usepackage{fullpage}
+\usepackage{seqsplit}
 \usepackage{amsmath}
 \usepackage{url}
 \usepackage{hyperref}
@@ -58,26 +59,116 @@
 \end{itemize}
 \question{Diffie-Hellman and Discrete Logarithms} [30 points]
 \begin{itemize}
-\item[(a)] % TODO 2a
-\item[(b)] % TODO 2b
-\item[(e)] % TODO 2e
+  \item[(a)] We can factor $2^{32} -1 = 2^1 * 3^2 * 7^1 * 11^1 * 31^1 * 151^1 * 331^3$ and use
+    the fact that if $g^{p / e_i} \not\equiv 1 \pmod{p} ,$ $g$ generates $\mathbb{Z}_p$. Thus 
+    we can test $$
+    7^{(2^{32}-1) / 2}, 
+    7^{(2^{32}-1) / 3},
+    7^{(2^{32}-1) / 7},
+    7^{(2^{32}-1) / 11},
+    7^{(2^{32}-1) / 31},
+    7^{(2^{32}-1) / 151},
+    7^{(2^{32}-1) / 331}$$
+    And see that they all are not equivalent to 1 mod p,  proving that $ord(7) = p-1$, and 
+    thus, 7 generates the group.
+\item[(b)] Code submission linked. Baby step giant step algorithm was used to compute the 
+  discrete log
+\item[(e)] 
+  \begin{itemize}
+    \item[(i)] In order to compute a ciphertext $c_3$ from $c_1, c_2$, we can simply multiply the
+      ciphertexts, e.g.
+      \begin{align}
+        c_1&= \langle g^{y_1}, g^{xy_1}m_1 \rangle \nonumber \\
+        c_2&= \langle g^{y_2}, g^{xy_2}m_2 \rangle \nonumber \\
+        c_3&= \langle g^{y_1 + y_2}, g^{x(y_1 + y_2)}(m_1  m_2) \rangle \nonumber 
+      \end{align}
+    \item[(ii)]
+      We can blind the plaintext in an Elgamal scheme so this is difficult to distinguish.
+      In order to blind the ciphertext, let us pick a random $b \in_R \mathbb{Z}_{p-1}$, the 
+      same way $x$ is chosen. Now we can compute $E(b)$ and $b^{-1} (\mathbb{Z}_{p-1})$. Using
+      this information, we encrypt $m$ as $E(m)*E(b)$, to get $E(mb)$. Then, upon decryption, we
+      simply use $D(mb) = mb * b^{-1} = m$ to recover the original message. This is a blind 
+      encryption as $b \in_R \mathbb{Z}_{p-1}$ over DDH. Thus $\Pr[b=b*] = \frac{1}{2}$ if b is
+      chosen uniformly.
+  \end{itemize}
 \end{itemize}
 
 
 \question{Number Theory II} [15 points]
 \begin{itemize}
-  \item[(a)] % TODO 3a
-  \item[(b)] % TODO 3b
-  \item[(c)] % TODO 3c
-  \item[(d)] % TODO 3d
-
+  \item[(a)]  For a set of $n$ integers not exceeding $2n$, there must be 2 that are relatively 
+    prime.   For $1 \leq x \leq n$, we have a set of these integers, $S = \{2x-1, 2x\}$ that 
+    is coprime as $gcd(2x-1, 2x) =1$. For the range of $x$, $|S| = n$ and so with $n+1$ integers, 
+    we must have at least coprime pair.
+  \item[(b)] We can prove this inductively. We know $gcd(f_0, f_1) =1$ by observation. Now, we 
+    suppose $gcd(f_n, f_{n+1}) =1$ for some $n$. We need to prove $gcd(f_{n+1}, f_{n+2})=1$. 
+    By using the fact of additive fact of gcd, eg that:
+    \begin{align}
+      gcd(a,b) &= \alpha a + \beta b \nonumber \\
+      gcd(a, a+b) &= \hat \alpha a + \hat \beta (a + b) \nonumber \\
+                  &= (\hat \alpha + \hat \beta) a + \hat \beta b \nonumber \\
+                  &= gcd(a,b) \nonumber
+    \end{align}
+  the inductive step becomes simple as 
+  $gcd(f_{n+1}, f_{n+2}) = gcd(f_{n+1}, f_{n+1} + f_n) = gcd(f_{n+1}, f_n) = 1$ by the inductive
+  hypothesis. Thus, the gcd of two neighboring terms of the Fibonacci sequence equals 1.
+\item[(c)] Let $d = gcd(a,b).$ We know that $\alpha a + \beta b = kd$ for 
+  $\alpha, \beta, k \in \mathbb{Z}$. 
+  Thus, if $x,y$ exist, we know $c=kd$ and thus $d = gcd(a,b) | c$
+  \item[(d)] We know there cannot exist a solution to this set of equations due to the following 
+    sequence of equalities:
+    \begin{align}
+      5x \equiv 1 \pmod{6} &\rightarrow 6|(5x-1) \rightarrow 6|5(5x-1) \nonumber \\
+                           &\rightarrow 6|(x-5) \rightarrow 3|(x-5) \nonumber \\
+      x \equiv& 5 \pmod{3} \nonumber \\
+      4x \equiv 13 \pmod{15} &\rightarrow 15|(4x-13) \rightarrow 15|4(4x-13) \nonumber \\
+                           &\rightarrow 15|(x-7) \rightarrow 3|(x-7) \nonumber \\
+        x \equiv& 7 \pmod{3} \nonumber 
+    \end{align}
+    Thus, since x cannot be congruent to both 5 and 7, there is no solution.
 \end{itemize}
 
 \question{RSA and factoring} [25 points] 
 \begin{itemize}
-  \item[(a)] % TODO 4a
-  \item[(b)] % TODO 4b
-  \item[(c)] % TODO 4c
+  \item[(a)] 
+  e =  0xf1bc3e139ef1b179306accf0809920a10e9f3b2a12065ee12fa7d6e519261431
+
+  d = \seqsplit{
+    0xd e891f2f 7a886ce afd86fe f69853a 2f1322c 111cf76 b83e6a2 20015d2 2507138 9c2f4c2 828f532 e381808 30e638d 584e
+    7a4 3afac2e ee1eae6 a41cae9 5a07978 d58c6a2 3ef8b63 0e43ba3 d8ff6b8 49950ca acdaa82 9b4d6c8 a05edf1 a30b90f 2fcdb3
+    149 deb6a2f 18286e9 70a7232 0ef9d5d f4803ed d2e5dbb ebf0ab9 a61b068 8d16175 38e4ff6 df8d955 e5ca13e 1e0dbb7 fec186
+    f3a c1d3fc1 6865ea8 64d0bdf 654cfbf 7e7a71e 24bfad5 bb5d168 8ad7b88 3a32f1f caa60f1 f47696b dfc626c fff19d6 5aaed0
+    c1a 336c9ed 94b033b 1c0491b ffede90 e2fd53d 4a92648 1463933 4dba524 6fa66cd a641f59 f4e9967 fb12ea4 085caec ee430c
+    6d9 a623e7f 1dc6a}
+  \item[(b)] 
+
+    Plaintext:
+    YEAH UT OH YOU FEEL THAT ALRIGHT COME ON DONT STOP NOW YOU DONE DID IT COME ON UH YEAH 
+    ALRIGHT HOLD ON BABY WHEN WERE GRINDING I GET SO EXCITED OOH HOW I LIKE IT I TRY BUT I 
+    CANT FIGHT IT OH YOURE DANCING REAL CLOSE CUZ ITS REAL REAL SLOW YOU KNOW WHAT YO
+
+    File: 1166.txt
+
+    Position: byte 86 - 342
+
+    In order to recover the plaintext, I decoded the public key using pem decoding. Then, in a 
+    loop, tried to encrypt every file in the LAPDOG database with this public key exponent, 
+    stopping when a match with the ciphertext was found. I used ct7, pt7 for the last digit in
+    my student ID.
+
+  \item[(c)]  Since all of the public keys are known publicly, an attacker can utilize the 
+    Chinese Remainder Theorem.  The modular equivalencies are shown below:
+    \begin{align}
+      x& := (r_A^3)^{\frac{1}{3}} = r_A  \nonumber \\
+      x& \pmod{ N_B} \equiv y_1 \nonumber \\
+      x& \pmod{ N_C} \equiv y_2  \nonumber \\
+      x& \pmod{ N_D} \equiv y_3  \nonumber
+    \end{align}
+    Where $y_i$ is the $i^{th}$ part of the ciphertext sent that corresponds to the right
+    public key, e.g. $ct = (y_1, y_2, y_3, c_A).$
+    Using the theorem allows an attacker to find the $r_A$ and thus compute $H(r_A)$, 
+    as $H$ is a public hash function. Then, the attacker will be able to find $m_A$ easily as $c_A$
+    is sent in the ciphertext.
 \end{itemize}
 
 \end{document}

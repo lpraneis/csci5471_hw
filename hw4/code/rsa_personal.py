@@ -4,6 +4,7 @@ from binascii import hexlify
 
 def brute_force(c, n, e):
     for i in range(1, 1233):
+        print('opening file {}.txt'.format(i))
         fn = "../../db/"+str(i)+".txt"
         f = open(fn, 'rb')
         for j in range(0, 769):
